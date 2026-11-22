@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/host.css?v=20261123_05">
+  <link rel="stylesheet" href="css/host.css?v=20261123_06">
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
@@ -54,28 +54,19 @@
       </div>
     </div>
 
-    <!-- 2. ĐẾM CƯ SĨ & TIỆN ÍCH (GÓC TRÊN PHẢI) -->
+    <!-- 2. ĐẾM CƯ SĨ & THỈNH CHUÔNG (GÓC TRÊN PHẢI) -->
     <div class="top-right-tools">
-      <div id="quizProgressPill" class="quiz-progress-pill">
-        📜 Tiến Độ: <strong id="hostProgressDigits" style="color: #ffd700;">0 / 12</strong> Câu
-      </div>
-      <div id="devoteeCounter" class="devotee-counter-pill">
-        🎋 Đã An Vị: <span id="seatedCountVal" style="color: #ffd700; font-weight: 900;">0</span>/50 | Cư Sĩ: <span id="playerCountVal">0</span>
-      </div>
-      <button id="btnToggleQuizBoard" class="btn-tool" style="display: none;" title="Bật/Tắt hiển thị bảng câu hỏi">
-        📜 Bật/Tắt Bảng Câu Hỏi
-      </button>
-      <button id="btnOpenTop3Host" class="btn-tool" style="display: none;" title="Xem Bảng Vàng Top 3">
-        🏆 Top 3 Bảng Vàng
-      </button>
-      <button id="btnTopQuestionManager" class="btn-tool" title="Soạn thảo & Quản lý bộ câu hỏi">
-        ✍️ Soạn Câu Hỏi
-      </button>
       <button id="btnHostBell" class="btn-tool btn-bell-highlight" title="Thỉnh đại hồng chung">
         🔔 Thỉnh Chuông (Câu 1/12)
       </button>
-      <button id="btnFullscreen" class="btn-tool" title="Toàn màn hình">
-        ⛶ Toàn Màn Hình
+      <div id="devoteeCounter" class="devotee-counter-pill">
+        🎋 Đã An Vị: <span id="seatedCountVal" style="color: #ffd700; font-weight: 900;">0</span>/50 | Cư Sĩ: <span id="playerCountVal">0</span>
+      </div>
+      <div id="quizProgressPill" class="quiz-progress-pill" style="display: none;">
+        📜 Tiến Độ: <strong id="hostProgressDigits" style="color: #ffd700;">0 / 12</strong> Câu
+      </div>
+      <button id="btnOpenTop3Host" class="btn-tool" style="display: none;" title="Xem Bảng Vàng Top 3">
+        🏆 Top 3 Bảng Vàng
       </button>
     </div>
 
@@ -532,33 +523,33 @@
       <div id="walkersLayer"></div>
     </main>
 
-    <!-- 5. BẢNG ĐIỀU KHIỂN DÀNH CHO BẠN (GIA HẠN THỜI GIAN) -->
+    <!-- 5. BẢNG ĐIỀU KHIỂN DƯỚI ĐÁY MÀN HÌNH CHỦ TOẠ -->
     <footer class="host-control-dock">
       <div class="dock-left-group">
-        <div class="timer-large-box">
+        <div class="timer-large-box" title="Thời gian đang chơi">
           <span style="font-size: 16px;">⏳</span>
-          <span id="timerDigits" class="timer-digits-large">07:00</span>
-        </div>
-
-        <div class="dock-time-buttons">
-          <span style="font-size: 11px; color: #d4af37; font-weight: 700;">Gia Hạn:</span>
-          <button class="btn-extend-time" data-seconds="60">+1 Phút</button>
-          <button class="btn-extend-time" data-seconds="180">+3 Phút</button>
-          <button class="btn-extend-time" data-seconds="300">+5 Phút</button>
-
-          <div class="custom-time-input-wrap">
-            <input type="number" id="customMinutesInput" class="custom-time-input" placeholder="Phút" min="1" max="60" value="2">
-            <button id="btnApplyCustomTime" class="btn-apply-custom">+ Thêm</button>
-          </div>
+          <span id="timerDigits" class="timer-digits-large">00:00</span>
         </div>
       </div>
 
       <div class="dock-right-actions">
-        <button id="btnToggleQuizDock" class="btn-tool" style="display: none;">📜 Bật/Tắt Câu Hỏi</button>
-        <button id="btnTogglePause" class="btn-tool">⏸ Tạm Dừng</button>
-        <button id="btnStartGame" class="btn-action-primary">🔔 THỈNH CHUÔNG (CÂU 1/12)</button>
+        <!-- Nút Hiện bảng câu hỏi -->
+        <button id="btnToggleQuizDock" class="btn-tool btn-dock-highlight" title="Bật/Tắt hiển thị bảng câu hỏi khảo nghiệm">
+          📜 Hiện Bảng Câu Hỏi
+        </button>
+        <!-- Hai nút Tiếp Tục (Tạm Dừng) và Kết Thúc Sớm -->
+        <button id="btnTogglePause" class="btn-tool" title="Tạm dừng hoặc tiếp tục thời gian">
+          ▶ Tiếp Tục
+        </button>
+        <button id="btnEndGame" class="btn-tool btn-endgame-style" title="Kết thúc sớm buổi khảo nghiệm">
+          🛑 Kết Thúc Sớm
+        </button>
+        <!-- Nút Xem Toàn Màn Hình -->
+        <button id="btnFullscreen" class="btn-tool" title="Bật/Tắt chế độ toàn màn hình">
+          ⛶ Toàn Màn Hình
+        </button>
+        <button id="btnStartGame" class="btn-action-primary" style="display: none;">🔔 THỈNH CHUÔNG (CÂU 1/12)</button>
         <button id="btnRestartGame" class="btn-tool btn-restart-highlight" style="display: none;" title="Khởi động lại toàn bộ game từ đầu">🔄 Chơi Lại Từ Đầu</button>
-        <button id="btnEndGame" class="btn-tool" style="color: #ff8888; border-color: #aa3333; display: none;">🛑 Kết Thúc Sớm</button>
       </div>
     </footer>
 
@@ -1074,6 +1065,6 @@
   </div>
 
   <script src="js/audio.js?v=20261123_05"></script>
-  <script src="js/host.js?v=20261123_05"></script>
+  <script src="js/host.js?v=20261123_06"></script>
 </body>
 </html>

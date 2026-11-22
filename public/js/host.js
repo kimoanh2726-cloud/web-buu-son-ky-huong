@@ -412,9 +412,13 @@ socket.on('host:state', (data) => {
     }
   }
 
+  if (btnTogglePause) {
+    btnTogglePause.textContent = data.isPaused ? '▶ Tiếp Tục' : '⏸ Tạm Dừng';
+  }
+
   if (data.status === 'PLAYING') {
-    btnStartGame.style.display = 'none';
-    btnEndGame.style.display = 'inline-flex';
+    if (btnStartGame) btnStartGame.style.display = 'none';
+    if (btnEndGame) btnEndGame.style.display = 'inline-flex';
   }
 });
 
@@ -598,16 +602,17 @@ socket.on('game:restarted', (data) => {
   toggleQuizCard(false);
 
   if (btnToggleQuizBoard) btnToggleQuizBoard.style.display = 'none';
-  if (btnToggleQuizDock) btnToggleQuizDock.style.display = 'none';
+  if (btnToggleQuizDock) btnToggleQuizDock.style.display = 'inline-flex';
   if (btnOpenTop3Host) btnOpenTop3Host.style.display = 'none';
   if (btnRestartGame) btnRestartGame.style.display = 'none';
 
   timerDigits.textContent = data.formattedTime || '07:00';
   if (btnStartGame) {
-    btnStartGame.style.display = 'inline-flex';
-    btnStartGame.textContent = '🔔 THỈNH CHUÔNG (CÂU 1/12)';
+    btnStartGame.style.display = 'none';
   }
-  if (btnEndGame) btnEndGame.style.display = 'none';
+  if (btnEndGame) btnEndGame.style.display = 'inline-flex';
+  if (btnTogglePause) btnTogglePause.textContent = '▶ Tiếp Tục';
+  if (btnHostBell) btnHostBell.textContent = '🔔 Thỉnh Chuông (Câu 1/12)';
   if (hostProgressDigits) hostProgressDigits.textContent = '0 / 12';
 
   // Xóa vương miện và đưa các avatar về lại ban đầu
@@ -638,7 +643,7 @@ function toggleQuizCard(forceState) {
   }
   if (btnToggleQuizDock) {
     btnToggleQuizDock.style.display = 'inline-flex';
-    btnToggleQuizDock.textContent = targetState ? '👁️ Ẩn Câu Hỏi' : '📜 Hiện Câu Hỏi';
+    btnToggleQuizDock.textContent = targetState ? '👁️ Ẩn Bảng Câu Hỏi' : '📜 Hiện Bảng Câu Hỏi';
   }
 }
 
@@ -959,19 +964,23 @@ btnHostBell.addEventListener('click', () => {
   socket.emit('host:bell');
 });
 
-extendButtons.forEach(btn => {
-  btn.addEventListener('click', () => {
-    const seconds = parseInt(btn.dataset.seconds);
-    socket.emit('host:add_time', { seconds });
+if (extendButtons) {
+  extendButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const seconds = parseInt(btn.dataset.seconds);
+      socket.emit('host:add_time', { seconds });
+    });
   });
-});
+}
 
-btnApplyCustomTime.addEventListener('click', () => {
-  const mins = parseInt(customMinutesInput.value);
-  if (mins && mins > 0) {
-    socket.emit('host:add_time', { seconds: mins * 60 });
-  }
-});
+if (btnApplyCustomTime && customMinutesInput) {
+  btnApplyCustomTime.addEventListener('click', () => {
+    const mins = parseInt(customMinutesInput.value);
+    if (mins && mins > 0) {
+      socket.emit('host:add_time', { seconds: mins * 60 });
+    }
+  });
+}
 
 btnFullscreen.addEventListener('click', () => {
   if (!document.fullscreenElement) {

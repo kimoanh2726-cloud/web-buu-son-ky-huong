@@ -426,10 +426,39 @@ body {
   background: rgba(42, 26, 17, 0.85);
   border: 1px solid var(--color-gold);
   color: var(--color-gold);
-  padding: 5px 10px;
+  padding: 5px 12px;
   border-radius: 6px;
   font-size: 11.5px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.btn-dock-highlight {
+  background: rgba(50, 28, 16, 0.95);
+  border: 1.5px solid #ffd700;
+  color: #ffd700;
+  font-weight: 700;
+}
+.btn-dock-highlight:hover {
+  background: #733418;
+  color: #fff;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+}
+
+.btn-endgame-style {
+  color: #ff9999 !important;
+  border-color: #aa2222 !important;
+  background: rgba(143, 20, 20, 0.45) !important;
+  font-weight: 700;
+}
+.btn-endgame-style:hover {
+  background: #a31414 !important;
+  color: #fff !important;
+  border-color: #ff4444 !important;
+  box-shadow: 0 0 10px rgba(255, 68, 68, 0.5);
 }
 
 .host-control-dock {
