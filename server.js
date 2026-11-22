@@ -326,7 +326,7 @@ const gameState = {
 const quizState = {
   currentIndex: -1,         // -1: Chưa bắt đầu; 0..11: Câu 1..12
   totalQuestions: QUESTIONS.length, // 12
-  timeLimit: 25,            // 25 giây cho mỗi câu hỏi
+  timeLimit: 15,            // 15 giây mặc định cho mỗi câu hỏi
   remainingTime: 0,
   interval: null,
   isAcceptingAnswers: false,

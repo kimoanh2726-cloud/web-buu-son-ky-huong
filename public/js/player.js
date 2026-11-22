@@ -110,8 +110,8 @@ let moveInterval = null;
 let currentQuizData = null;
 let isQuestionActive = false;
 let mySelectedOption = -1;
-let questionRemainingTime = 25;
-let questionTotalTime = 25;
+let questionRemainingTime = 15;
+let questionTotalTime = 15;
 
 // ============================================================================
 // 1. THAM GIA ĐẠO TRÀNG (JOIN TEMPLE)
@@ -782,7 +782,7 @@ function handleQuestionStarted(data) {
   currentQuizData = data;
   mySelectedOption = -1;
   questionRemainingTime = data.remainingTime !== undefined ? data.remainingTime : data.timeLimit;
-  questionTotalTime = data.timeLimit || 25;
+  questionTotalTime = data.timeLimit || 15;
 
   if (playerProgressBadge) {
     playerProgressBadge.textContent = `📜 Câu: ${data.questionNumber}/${data.totalQuestions}`;
@@ -811,7 +811,7 @@ function openQuizModal() {
     mobileQProgress.textContent = `CÂU ${data.questionNumber < 10 ? '0' + data.questionNumber : data.questionNumber} / ${data.totalQuestions}`;
   }
   if (qTopicTag) {
-    qTopicTag.textContent = `${data.queSo} • ${data.chuDe}`;
+    qTopicTag.textContent = data.chuDe || 'Khảo Nghiệm Bửu Sơn Kỳ Hương';
   }
   if (mobileQTimer) {
     mobileQTimer.textContent = questionRemainingTime;

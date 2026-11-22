@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/host.css?v=20261123_04">
+  <link rel="stylesheet" href="css/host.css?v=20261123_05">
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
@@ -392,39 +392,43 @@
 
     <!-- BẢNG KHẢO NGHIỆM ĐỒNG BỘ TRÊN MÀN HÌNH CHÍNH (XUẤT HIỆN MỖI KHI THỈNH CHUÔNG) -->
     <div id="hostQuizCard" class="host-quiz-board" style="display: none;">
-      <div class="hq-header">
-        <div class="hq-header-left">
-          <div class="hq-progress-tag">
-            <span class="hq-lantern">🏮</span> 
-            <span id="hqProgressText" class="hq-progress-text">CÂU 01 / 12</span>
+      <div class="hq-header" id="hqHeader" title="Bấm giữ chuột tại đây để di chuyển bảng câu hỏi">
+        <div class="hq-header-row-top">
+          <div class="hq-header-left">
+            <div class="hq-progress-tag">
+              <span class="hq-lantern">🏮</span> 
+              <span id="hqProgressText" class="hq-progress-text">CÂU 01 / 12</span>
+            </div>
+            <div class="hq-topic" id="hqTopicText">Khảo Nghiệm Bửu Sơn Kỳ Hương</div>
           </div>
-          <div class="hq-topic" id="hqTopicText">Quẻ Đệ Nhất • Bối Cảnh Khai Đạo</div>
+
+          <div class="hq-header-top-right">
+            <!-- Đồng Hồ Đếm Ngược & Thanh Giây -->
+            <div class="hq-timer-badge">
+              ⏳ <span id="hqTimerDigits">15</span>s
+              <div class="hq-timer-bar-wrap">
+                <div id="hqTimerBar" class="hq-timer-bar"></div>
+              </div>
+            </div>
+            <span class="hq-drag-hint" title="Bấm giữ chuột và kéo để dời bảng đi bất kỳ đâu">✥ Kéo</span>
+          </div>
         </div>
 
-        <div class="hq-header-center">
-          <!-- Đồng Hồ Đếm Ngược & Thanh Giây -->
-          <div class="hq-timer-badge">
-            ⏳ <span id="hqTimerDigits">25</span>s
-            <div class="hq-timer-bar-wrap">
-              <div id="hqTimerBar" class="hq-timer-bar"></div>
-            </div>
-          </div>
-
-          <!-- Nút Chỉnh Nhanh Thời Gian Người Chơi Trả Lời (Tác động tức thì máy người chơi) -->
+        <div class="hq-header-row-bottom">
+          <!-- Nút Chỉnh Nhanh Thời Gian: +5s và -5s -->
           <div class="hq-time-adjust-group" title="Cộng/Trừ thời gian cho toàn bộ người chơi ngay lập tức">
             <span class="hq-time-label">Chỉnh Giây:</span>
-            <button class="btn-hq-time" data-delta="10" title="Cộng thêm 10 giây">+10s</button>
-            <button class="btn-hq-time" data-delta="15" title="Cộng thêm 15 giây">+15s</button>
+            <button class="btn-hq-time" data-delta="5" title="Cộng thêm 5 giây">+5s</button>
             <button class="btn-hq-time" data-delta="-5" title="Trừ bớt 5 giây">-5s</button>
           </div>
-        </div>
 
-        <div class="hq-header-right">
-          <!-- Chuyển hoặc Quay lại câu hỏi trước -->
-          <button id="btnHqPrev" class="btn-hq-btn-nav" title="Quay lại câu hỏi trước">◀ Câu Trước</button>
-          <button id="btnHqNext" class="btn-hq-btn-nav" title="Chuyển sang câu hỏi kế tiếp">Câu Sau ➔</button>
-          <!-- Nút tắt / ẩn bảng câu hỏi để xem Chánh Điện -->
-          <button id="btnCloseHq" class="btn-hq-close" title="Ẩn bảng câu hỏi (Bật lại bằng nút trên góc phải)">✕ Ẩn Bảng</button>
+          <div class="hq-nav-group">
+            <!-- Chuyển hoặc Quay lại câu hỏi trước -->
+            <button id="btnHqPrev" class="btn-hq-btn-nav" title="Quay lại câu hỏi trước">◀ Câu Trước</button>
+            <button id="btnHqNext" class="btn-hq-btn-nav" title="Chuyển sang câu hỏi kế tiếp">Câu Sau ➔</button>
+            <!-- Nút Ẩn Xem Chánh Điện thay thế cho chỗ Ẩn Bảng -->
+            <button id="btnCloseHq" class="btn-hq-close" title="Ẩn bảng câu hỏi để chiêm bái Chánh Điện">👁️ Ẩn Xem Chánh Điện</button>
+          </div>
         </div>
       </div>
 
@@ -433,7 +437,7 @@
       </div>
 
       <div class="hq-options-grid" id="hqOptionsGrid">
-        <!-- 4 Lựa chọn A, B, C, D -->
+        <!-- 4 Lựa chọn A, B, C, D (Xếp dọc theo cột) -->
       </div>
 
       <!-- Khung lời giải nghĩa tâm linh (Tự động mở khi hết thời gian) -->
@@ -447,15 +451,8 @@
         <div id="hqStatusText" class="hq-status-note">Đang mở thời khắc cho các cư sĩ an vị chọn đáp án...</div>
         
         <div class="hq-footer-actions">
-          <div class="hq-custom-time-setter">
-            <input type="number" id="inputHqCustomSecs" min="5" max="180" value="25" class="hq-custom-input" title="Nhập số giây muốn đặt">
-            <button id="btnApplyHqSecs" class="btn-hq-apply-sec">Đặt Lại Giây</button>
-          </div>
           <button id="btnHqNextBell" class="btn-hq-bell-next" style="display: none;">
             🔔 THỈNH CHUÔNG SANG CÂU TIẾP THEO ➔
-          </button>
-          <button id="btnHqMinimizeBottom" class="btn-hq-btn-nav">
-            👁️ Ẩn Xem Chánh Điện
           </button>
         </div>
       </div>
@@ -1076,7 +1073,7 @@
 
   </div>
 
-  <script src="js/audio.js?v=20261123_04"></script>
-  <script src="js/host.js?v=20261123_04"></script>
+  <script src="js/audio.js?v=20261123_05"></script>
+  <script src="js/host.js?v=20261123_05"></script>
 </body>
 </html>

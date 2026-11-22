@@ -1,35 +1,7 @@
 [
   {
     "id": 1,
-    "que_so": "Quẻ #1",
-    "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
-    "cau_hoi": "Trong bối cảnh lịch sử - xã hội Nam Bộ giữa thế kỷ XIX, yếu tố nào đóng vai trò quyết định khiến tôn giáo nội sinh Bửu Sơn Kỳ Hương nhanh chóng được cộng đồng lưu dân đón nhận?",
-    "cac_lua_chon": [
-      "Sự xuất hiện của một hệ thống giáo lý kinh viện phức tạp, đáp ứng nhu cầu khoa cử Nho học thời bấy giờ.",
-      "Sự bần cùng kinh tế, bất an tâm lý trước thiên tai, dịch bệnh cùng sự suy vi/hạn chế của các tôn giáo đương thời.",
-      "Sự hỗ trợ tài chính và hậu thuẫn hành chính trực tiếp từ triều đình nhà Nguyễn dành cho việc lập trại ruộng.",
-      "Yêu cầu khắt khe về việc xuất gia tu hành ly gia cắt ái nhằm tránh nghĩa vụ thuế khóa của thực dân Pháp."
-    ],
-    "dap_an_dung": 1,
-    "loi_giai": ""
-  },
-  {
-    "id": 2,
-    "que_so": "Quẻ #2",
-    "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
-    "cau_hoi": "Vì sao bộ bà ba đen cùng khăn quấn lại được chọn làm trang phục nhận diện truyền thống của tín đồ Bửu Sơn Kỳ Hương?",
-    "cac_lua_chon": [
-      "Là lễ phục đắt tiền biểu thị sự giàu có và địa vị xã hội cao của cộng đồng cư sĩ Nam Bộ.",
-      "Tích hợp giữa tinh thần tôn giáo nhập thế (không phân biệt y tu và y đời), nét văn hóa dân tộc và tính tiện dụng lao động.",
-      "Do chính quyền triều Nguyễn ban hành quy định bắt buộc tất cả các tôn giáo nội sinh phải mặc áo bà ba đen.",
-      "Mô phỏng hoàn toàn trang phục truyền thống của các tăng sĩ Phật giáo Nam tông Khmer vùng Bảy Núi."
-    ],
-    "dap_an_dung": 1,
-    "loi_giai": ""
-  },
-  {
-    "id": 3,
-    "que_so": "Quẻ #3",
+    "que_so": "",
     "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
     "cau_hoi": "Quan niệm ẩm thực \"vừa chay vừa mặn\" của Bửu Sơn Kỳ Hương được lý giải dựa trên nền tảng đạo đức thực dụng nào?",
     "cac_lua_chon": [
@@ -42,127 +14,155 @@
     "loi_giai": ""
   },
   {
-    "id": 4,
-    "que_so": "Quẻ #4",
+    "id": 2,
+    "que_so": "",
     "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
-    "cau_hoi": "Kiến trúc ngoại điện của các chùa Bửu Sơn Kỳ Hương nguyên thủy thường xuất hiện bàn thờ Thông thiên hai tầng. Cấu trúc hai tầng này biểu đạt vũ trụ quan nào?",
+    "cau_hoi": "Điểm cách tân mang tính đột phá của Phật Thầy Tây An Đoàn Minh Huyên trong việc \"Việt hóa\" tư tưởng Nho giáo và Phật giáo thể hiện qua Tứ đại trọng ân là gì?",
     "cac_lua_chon": [
-      "Sự mô phỏng cấu trúc phân cấp hành chính giữa chính quyền trung ương và chính quyền địa phương.",
-      "Sự phân chia rạch ròi giữa thế giới tăng sĩ xuất gia và tầng lớp cư sĩ tại gia.",
-      "Triết lý Tam giáo đồng nguyên với tầng trên đại diện Phật giáo và tầng dưới đại diện Nho giáo.",
-      "Vũ trụ quan nhị nguyên Thiên Hoàng - Địa Mẫu (Thiên - Địa) kết nối với vị trí trung gian của con người."
+      "Bãi bỏ hoàn toàn Ân tổ tiên cha mẹ để tập trung tuyệt đối vào nghĩa vụ phụng sự Tam bảo nơi chùa chiền.",
+      "Chuyển nội hàm Ân Quốc vương thành Ân đất nước, gắn việc tu hành với lòng yêu nước và trách nhiệm bảo vệ giang sơn.",
+      "Thay thế Ân đồng bào nhân loại bằng nghĩa vụ phục vụ cho tầng lớp quan lại triều đình phong kiến.",
+      "Giữ nguyên toàn bộ nội dung Tứ ân từ kinh điển Phật giáo Bắc tông mà không có bất kỳ điều chỉnh nào."
+    ],
+    "dap_an_dung": 1,
+    "loi_giai": ""
+  },
+  {
+    "id": 3,
+    "que_so": "",
+    "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
+    "cau_hoi": "Trong hệ thống giới luật của Bửu Sơn Kỳ Hương, giới Cấm sát sinh đã được điều chỉnh phù hợp với điều kiện sinh thái Nam Bộ thế kỷ XIX như thế nào?",
+    "cac_lua_chon": [
+      "Bắt buộc tất cả tín đồ phải ăn chay trường tuyệt đối và không được tham gia vào các hoạt động trồng trọt.",
+      "Cho phép sát hại tự do mọi loài động vật vì quan niệm \"sát vật dưỡng nhân\" không có bất kỳ giới hạn nào.",
+      "Chỉ cấm sát sinh các loài thủy sản dưới nước, còn các loài vật trên bờ đều được phép giết mổ tự do.",
+      "Nhấn mạnh kiêng ăn thịt trâu, bò và chó nhằm bảo vệ sức kéo nông nghiệp và giữ nhà chống thú dữ."
     ],
     "dap_an_dung": 3,
     "loi_giai": ""
   },
   {
-    "id": 5,
-    "que_so": "Quẻ #5",
+    "id": 4,
+    "que_so": "",
     "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
-    "cau_hoi": "Trong hệ thống giới luật của Bửu Sơn Kỳ Hương, giới Cấm sát sinh đã được điều chỉnh phù hợp với điều kiện sinh thái Nam Bộ thế kỷ XIX như thế nào?",
+    "cau_hoi": "Biểu tượng Trần Điều của Bửu Sơn Kỳ Hương đã được Đức Huỳnh Phú Sổ kế thừa và cải biến như thế nào khi khai lập Phật giáo Hòa Hảo (1939)?",
     "cac_lua_chon": [
-      "Nhấn mạnh kiêng ăn thịt trâu, bò và chó nhằm bảo vệ sức kéo nông nghiệp và giữ nhà chống thú dữ.",
-      "Bắt buộc tất cả tín đồ phải ăn chay trường tuyệt đối và không được tham gia vào các hoạt động trồng trọt.",
-      "Cho phép sát hại tự do mọi loài động vật vì quan niệm \"sát vật dưỡng nhân\" không có bất kỳ giới hạn nào.",
-      "Chỉ cấm sát sinh các loài thủy sản dưới nước, còn các loài vật trên bờ đều được phép giết mổ tự do."
+      "Chuyển màu đỏ của Trần Điều sang màu nâu sậm (Trần dà) để biểu trưng cho sự hòa hiệp nhân loại và màu y phục tăng sĩ.",
+      "Thay thế hoàn toàn tấm vải màu bằng hệ thống cốt tượng Phật A Di Đà bằng đồng mạ vàng đồ sộ.",
+      "Giữ nguyên màu đỏ nhưng vẽ thêm hình ảnh Bông sen và Bánh xe Pháp chuyển lên chính giữa tấm vải.",
+      "Bãi bỏ hoàn toàn việc thờ biểu tượng vải màu và chuyển sang thờ một bát hương duy nhất trên bàn ván gỗ."
+    ],
+    "dap_an_dung": 0,
+    "loi_giai": ""
+  },
+  {
+    "id": 5,
+    "que_so": "",
+    "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
+    "cau_hoi": "Tín vật \"Lòng phái\" được Đức Phật Thầy Tây An cấp cho người quy y Bửu Sơn Kỳ Hương mang ý nghĩa tâm linh và xã hội như thế nào đối với tín đồ?",
+    "cac_lua_chon": [
+      "Vừa là bằng chứng quy y đức tin, bùa hộ mệnh trừ tà, vừa là \"giấy thông hành\" tâm linh dự Hội Long Hoa.",
+      "Là tài liệu ghi chép chi tiết toàn bộ hệ thống kinh điển Hán văn dùng cho việc tụng niệm hằng ngày.",
+      "Là chứng chỉ xác nhận phẩm vị chức sắc và thẩm quyền quản lý các cơ sở thờ tự trong giáo đoàn.",
+      "Là văn bản pháp lý do chính quyền thực dân Pháp cấp để xác nhận quyền sở hữu đất đai trại ruộng."
     ],
     "dap_an_dung": 0,
     "loi_giai": ""
   },
   {
     "id": 6,
-    "que_so": "Quẻ #6",
+    "que_so": "",
     "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
-    "cau_hoi": "Biểu tượng Trần Điều của Bửu Sơn Kỳ Hương đã được Đức Huỳnh Phú Sổ kế thừa và cải biến như thế nào khi khai lập Phật giáo Hòa Hảo (1939)?",
+    "cau_hoi": "Nguyên nhân cốt lõi nào dưới góc nhìn tổ chức học dẫn đến hiện tượng suy giảm tín đồ và sự mờ nhạt bản sắc của Bửu Sơn Kỳ Hương trong giai đoạn hiện nay?",
     "cac_lua_chon": [
-      "Bãi bỏ hoàn toàn việc thờ biểu tượng vải màu và chuyển sang thờ một bát hương duy nhất trên bàn ván gỗ.",
-      "Chuyển màu đỏ của Trần Điều sang màu nâu sậm (Trần dà) để biểu trưng cho sự hòa hiệp nhân loại và màu y phục tăng sĩ.",
-      "Thay thế hoàn toàn tấm vải màu bằng hệ thống cốt tượng Phật A Di Đà bằng đồng mạ vàng đồ sộ.",
-      "Giữ nguyên màu đỏ nhưng vẽ thêm hình ảnh Bông sen và Bánh xe Pháp chuyển lên chính giữa tấm vải."
-    ],
-    "dap_an_dung": 1,
-    "loi_giai": ""
-  },
-  {
-    "id": 7,
-    "que_so": "Quẻ #7",
-    "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
-    "cau_hoi": "Điểm cách tân mang tính đột phá của Phật Thầy Tây An Đoàn Minh Huyên trong việc \"Việt hóa\" tư tưởng Nho giáo và Phật giáo thể hiện qua Tứ đại trọng ân là gì?",
-    "cac_lua_chon": [
-      "Giữ nguyên toàn bộ nội dung Tứ ân từ kinh điển Phật giáo Bắc tông mà không có bất kỳ điều chỉnh nào.",
-      "Thay thế Ân đồng bào nhân loại bằng nghĩa vụ phục vụ cho tầng lớp quan lại triều đình phong kiến.",
-      "Chuyển nội hàm Ân Quốc vương thành Ân đất nước, gắn việc tu hành với lòng yêu nước và trách nhiệm bảo vệ giang sơn.",
-      "Bãi bỏ hoàn toàn Ân tổ tiên cha mẹ để tập trung tuyệt đối vào nghĩa vụ phụng sự Tam bảo nơi chùa chiền."
+      "Sự xung đột gay gắt về mặt giáo lý đối kháng trực tiếp với các giá trị đạo đức truyền thống dân tộc.",
+      "Tín đồ bị bắt buộc phải xuất gia cách ly hoàn toàn với đời sống kinh tế - xã hội hiện đại.",
+      "Thiếu bộ máy giáo hội thống nhất, kinh sách truyền khẩu bị phân tán và tính chất \"mềm\" của giáo luật khó giữ chân tín đồ.",
+      "Sự cấm đoán khắt khe về mặt pháp lý của Nhà nước đối với các hoạt động từ thiện và tự viện của đạo."
     ],
     "dap_an_dung": 2,
     "loi_giai": ""
   },
   {
-    "id": 8,
-    "que_so": "Quẻ #8",
+    "id": 7,
+    "que_so": "",
     "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
-    "cau_hoi": "Nguyên nhân cốt lõi nào dưới góc nhìn tổ chức học dẫn đến hiện tượng suy giảm tín đồ và sự mờ nhạt bản sắc của Bửu Sơn Kỳ Hương trong giai đoạn hiện nay?",
+    "cau_hoi": "Vì sao bộ bà ba đen cùng khăn quấn lại được chọn làm trang phục nhận diện truyền thống của tín đồ Bửu Sơn Kỳ Hương?",
     "cac_lua_chon": [
-      "Tín đồ bị bắt buộc phải xuất gia cách ly hoàn toàn với đời sống kinh tế - xã hội hiện đại.",
-      "Sự cấm đoán khắt khe về mặt pháp lý của Nhà nước đối với các hoạt động từ thiện và tự viện của đạo.",
-      "Sự xung đột gay gắt về mặt giáo lý đối kháng trực tiếp với các giá trị đạo đức truyền thống dân tộc.",
-      "Thiếu bộ máy giáo hội thống nhất, kinh sách truyền khẩu bị phân tán và tính chất \"mềm\" của giáo luật khó giữ chân tín đồ."
+      "Tích hợp giữa tinh thần tôn giáo nhập thế (không phân biệt y tu và y đời), nét văn hóa dân tộc và tính tiện dụng lao động.",
+      "Là lễ phục đắt tiền biểu thị sự giàu có và địa vị xã hội cao của cộng đồng cư sĩ Nam Bộ.",
+      "Mô phỏng hoàn toàn trang phục truyền thống của các tăng sĩ Phật giáo Nam tông Khmer vùng Bảy Núi.",
+      "Do chính quyền triều Nguyễn ban hành quy định bắt buộc tất cả các tôn giáo nội sinh phải mặc áo bà ba đen."
     ],
-    "dap_an_dung": 3,
+    "dap_an_dung": 0,
+    "loi_giai": ""
+  },
+  {
+    "id": 8,
+    "que_so": "",
+    "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
+    "cau_hoi": "Trong bối cảnh lịch sử - xã hội Nam Bộ giữa thế kỷ XIX, yếu tố nào đóng vai trò quyết định khiến tôn giáo nội sinh Bửu Sơn Kỳ Hương nhanh chóng được cộng đồng lưu dân đón nhận?",
+    "cac_lua_chon": [
+      "Yêu cầu khắt khe về việc xuất gia tu hành ly gia cắt ái nhằm tránh nghĩa vụ thuế khóa của thực dân Pháp.",
+      "Sự xuất hiện của một hệ thống giáo lý kinh viện phức tạp, đáp ứng nhu cầu khoa cử Nho học thời bấy giờ.",
+      "Sự bần cùng kinh tế, bất an tâm lý trước thiên tai, dịch bệnh cùng sự suy vi/hạn chế của các tôn giáo đương thời.",
+      "Sự hỗ trợ tài chính và hậu thuẫn hành chính trực tiếp từ triều đình nhà Nguyễn dành cho việc lập trại ruộng."
+    ],
+    "dap_an_dung": 2,
     "loi_giai": ""
   },
   {
     "id": 9,
-    "que_so": "Quẻ #9",
+    "que_so": "",
     "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
-    "cau_hoi": "Xét dưới góc độ tổ chức học tôn giáo, mô hình vận hành của Bửu Sơn Kỳ Hương có đặc trưng cốt lõi nào so với đạo Cao Đài hay Phật giáo Bắc tông?",
+    "cau_hoi": "Kiến trúc ngoại điện của các chùa Bửu Sơn Kỳ Hương nguyên thủy thường xuất hiện bàn thờ Thông thiên hai tầng. Cấu trúc hai tầng này biểu đạt vũ trụ quan nào?",
     "cac_lua_chon": [
-      "Thành lập hệ thống viện nghiên cứu kinh điển và trường đào tạo tăng tài quy mô toàn quốc.",
-      "Xây dựng bộ máy hành chính trung ương tập quyền nghiêm ngặt với chức phẩm Giáo tông đứng đầu.",
-      "Bắt buộc các chức việc quản lý tự viện phải thọ giới xuất gia và sinh hoạt theo luật nghi đại giới đàn.",
-      "Mang tính phi giáo hội, không có hệ thống chức sắc giáo phẩm hay tăng sĩ xuất gia, mỗi chùa vận hành độc lập."
+      "Sự mô phỏng cấu trúc phân cấp hành chính giữa chính quyền trung ương và chính quyền địa phương.",
+      "Vũ trụ quan nhị nguyên Thiên Hoàng - Địa Mẫu (Thiên - Địa) kết nối với vị trí trung gian của con người.",
+      "Triết lý Tam giáo đồng nguyên với tầng trên đại diện Phật giáo và tầng dưới đại diện Nho giáo.",
+      "Sự phân chia rạch ròi giữa thế giới tăng sĩ xuất gia và tầng lớp cư sĩ tại gia."
     ],
-    "dap_an_dung": 3,
+    "dap_an_dung": 1,
     "loi_giai": ""
   },
   {
     "id": 10,
-    "que_so": "Quẻ #10",
+    "que_so": "",
     "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
-    "cau_hoi": "Chế độ \"Thủ tự\" tại các cơ sở thờ tự Bửu Sơn Kỳ Hương thể hiện nét văn hóa quản lý như thế nào?",
+    "cau_hoi": "Biểu tượng Trần Điều (tấm vải màu đỏ) trong chánh điện tự viện Bửu Sơn Kỳ Hương thể hiện triết lý thờ phụng nào?",
     "cac_lua_chon": [
-      "Chức vụ thủ tự chỉ được cha truyền con nối theo dòng họ cai trị và không cho phép tín đồ ngoài họ tham gia.",
-      "Người thủ tự được bổ nhiệm trực tiếp từ Ban Tôn giáo triều đình để giám sát hoạt động chính trị của làng xã.",
-      "Đứng đầu quản lý là một vị trụ trì đã thụ đại giới, nắm quyền tối cao về tài chính và nhân sự toàn vùng.",
-      "Người giữ chùa tự nguyện hoặc được đề cử trông coi hương khói hằng ngày, mang tinh thần bình đẳng và khiêm nhường."
+      "Đề cao quyền lực tối thượng của triều đình phong kiến thông qua màu sắc đại diện cho hoàng tộc.",
+      "Vô vi hóa đối tượng thờ tự và thể hiện tư tưởng \"Tam giáo quy nguyên - Ngũ chi hiệp nhất\".",
+      "Mô phỏng hình ảnh mặt trời theo nghi lễ Đạo giáo phù thủy cổ xưa để xua đuổi tà ma.",
+      "Thay thế hoàn toàn vai trò của bàn thờ Cửu huyền thất tổ trong cấu trúc thờ tự tại gia."
     ],
-    "dap_an_dung": 3,
+    "dap_an_dung": 1,
     "loi_giai": ""
   },
   {
     "id": 11,
-    "que_so": "Quẻ #11",
+    "que_so": "",
     "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
-    "cau_hoi": "Tín vật \"Lòng phái\" được Đức Phật Thầy Tây An cấp cho người quy y Bửu Sơn Kỳ Hương mang ý nghĩa tâm linh và xã hội như thế nào đối với tín đồ?",
+    "cau_hoi": "Chế độ \"Thủ tự\" tại các cơ sở thờ tự Bửu Sơn Kỳ Hương thể hiện nét văn hóa quản lý như thế nào?",
     "cac_lua_chon": [
-      "Vừa là bằng chứng quy y đức tin, bùa hộ mệnh trừ tà, vừa là \"giấy thông hành\" tâm linh dự Hội Long Hoa.",
-      "Là tài liệu ghi chép chi tiết toàn bộ hệ thống kinh điển Hán văn dùng cho việc tụng niệm hằng ngày.",
-      "Là văn bản pháp lý do chính quyền thực dân Pháp cấp để xác nhận quyền sở hữu đất đai trại ruộng.",
-      "Là chứng chỉ xác nhận phẩm vị chức sắc và thẩm quyền quản lý các cơ sở thờ tự trong giáo đoàn."
+      "Người giữ chùa tự nguyện hoặc được đề cử trông coi hương khói hằng ngày, mang tinh thần bình đẳng và khiêm nhường.",
+      "Đứng đầu quản lý là một vị trụ trì đã thụ đại giới, nắm quyền tối cao về tài chính và nhân sự toàn vùng.",
+      "Chức vụ thủ tự chỉ được cha truyền con nối theo dòng họ cai trị và không cho phép tín đồ ngoài họ tham gia.",
+      "Người thủ tự được bổ nhiệm trực tiếp từ Ban Tôn giáo triều đình để giám sát hoạt động chính trị của làng xã."
     ],
     "dap_an_dung": 0,
     "loi_giai": ""
   },
   {
     "id": 12,
-    "que_so": "Quẻ #12",
+    "que_so": "",
     "chu_de": "Khảo Nghiệm Bửu Sơn Kỳ Hương",
-    "cau_hoi": "Biểu tượng Trần Điều (tấm vải màu đỏ) trong chánh điện tự viện Bửu Sơn Kỳ Hương thể hiện triết lý thờ phụng nào?",
+    "cau_hoi": "Xét dưới góc độ tổ chức học tôn giáo, mô hình vận hành của Bửu Sơn Kỳ Hương có đặc trưng cốt lõi nào so với đạo Cao Đài hay Phật giáo Bắc tông?",
     "cac_lua_chon": [
-      "Thay thế hoàn toàn vai trò của bàn thờ Cửu huyền thất tổ trong cấu trúc thờ tự tại gia.",
-      "Mô phỏng hình ảnh mặt trời theo nghi lễ Đạo giáo phù thủy cổ xưa để xua đuổi tà ma.",
-      "Đề cao quyền lực tối thượng của triều đình phong kiến thông qua màu sắc đại diện cho hoàng tộc.",
-      "Vô vi hóa đối tượng thờ tự và thể hiện tư tưởng \"Tam giáo quy nguyên - Ngũ chi hiệp nhất\"."
+      "Xây dựng bộ máy hành chính trung ương tập quyền nghiêm ngặt với chức phẩm Giáo tông đứng đầu.",
+      "Thành lập hệ thống viện nghiên cứu kinh điển và trường đào tạo tăng tài quy mô toàn quốc.",
+      "Bắt buộc các chức việc quản lý tự viện phải thọ giới xuất gia và sinh hoạt theo luật nghi đại giới đàn.",
+      "Mang tính phi giáo hội, không có hệ thống chức sắc giáo phẩm hay tăng sĩ xuất gia, mỗi chùa vận hành độc lập."
     ],
     "dap_an_dung": 3,
     "loi_giai": ""

@@ -372,7 +372,7 @@ function exportQuestionsToXlsxBuffer(questions) {
     const letter = ['A', 'B', 'C', 'D'][q.dap_an_dung || 0] || 'A';
     return {
       'STT': idx + 1,
-      'Quẻ Số': q.que_so || `Quẻ #${idx + 1}`,
+      'Số Câu': `Câu ${idx + 1}`,
       'Chủ Đề': q.chu_de || 'Giáo Lý Bửu Sơn Kỳ Hương',
       'Question Text': q.cau_hoi || '',
       'Question Type': 'Multiple Choice',
@@ -420,7 +420,7 @@ function exportQuestionsToDocxBuffer(questions) {
     const letter = ['A', 'B', 'C', 'D'][q.dap_an_dung || 0] || 'A';
 
     // Đề bài
-    docBody += `<w:p><w:r><w:rPr><w:b/><w:sz w:val="26"/><w:color w:val="8B1414"/></w:rPr><w:t>Câu ${idx + 1} (${escapeXml(q.que_so || `Quẻ #${idx + 1}`)} - ${escapeXml(q.chu_de || 'Giáo Lý')}): </w:t></w:r><w:r><w:rPr><w:sz w:val="26"/><w:b/></w:rPr><w:t>${escapeXml(q.cau_hoi || '')}</w:t></w:r></w:p>`;
+    docBody += `<w:p><w:r><w:rPr><w:b/><w:sz w:val="26"/><w:color w:val="8B1414"/></w:rPr><w:t>Câu ${idx + 1} (${escapeXml(q.chu_de || 'Giáo Lý')}): </w:t></w:r><w:r><w:rPr><w:sz w:val="26"/><w:b/></w:rPr><w:t>${escapeXml(q.cau_hoi || '')}</w:t></w:r></w:p>`;
 
     // 4 lựa chọn A, B, C, D (đánh dấu đáp án đúng rõ ràng bằng gạch chân và dấu sao)
     ['A', 'B', 'C', 'D'].forEach((l, oIdx) => {

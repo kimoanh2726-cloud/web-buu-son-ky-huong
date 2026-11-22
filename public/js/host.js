@@ -701,7 +701,7 @@ function renderHostQuestion(data) {
     hqProgressText.textContent = `CÂU ${data.questionNumber < 10 ? '0' + data.questionNumber : data.questionNumber} / ${data.totalQuestions}`;
   }
   if (hqTopicText) {
-    hqTopicText.textContent = `${data.queSo || ''} • ${data.chuDe || ''}`;
+    hqTopicText.textContent = data.chuDe || 'Khảo Nghiệm Bửu Sơn Kỳ Hương';
   }
   if (hqQuestionText) {
     hqQuestionText.textContent = data.cauHoi;
@@ -1524,7 +1524,7 @@ function renderQuestionList() {
         <span class="qmm-item-badge">#${idx + 1 < 10 ? '0' + (idx + 1) : idx + 1}</span>
         <span class="qmm-item-answer" title="Đáp án đúng: ${letter}">✓ Đáp án: ${letter}</span>
       </div>
-      <div class="qmm-item-title">${escapeHtml(q.que_so || '')} • ${escapeHtml(q.chuDe || q.chu_de || '')}</div>
+      <div class="qmm-item-title">Câu #${idx + 1} • ${escapeHtml(q.chuDe || q.chu_de || 'Khảo Nghiệm')}</div>
       <div class="qmm-item-snippet">${escapeHtml(q.cau_hoi || '')}</div>
     `;
     questionListItems.appendChild(card);
@@ -1896,7 +1896,7 @@ function renderQmCurrentQuestions(questions) {
 
     item.innerHTML = `
       <div class="qm-cq-title">Câu ${idx + 1}: ${escapeHtml(q.cau_hoi || '')}</div>
-      <div class="qm-cq-topic">${escapeHtml(q.que_so || `Quẻ #${idx + 1}`)} • ${escapeHtml(q.chu_de || 'Giáo Lý')}</div>
+      <div class="qm-cq-topic">Câu ${idx + 1} • ${escapeHtml(q.chu_de || 'Giáo Lý Bửu Sơn Kỳ Hương')}</div>
       <div class="qm-cq-opts-grid">${optsHtml}</div>
       ${q.loi_giai ? `<div style="font-size: 10px; color: #ffd700; margin-top: 3px; font-style: italic;">💡 Ý nghĩa: ${escapeHtml(q.loi_giai)}</div>` : ''}
     `;
@@ -2096,6 +2096,12 @@ socket.on('quiz:current_question_updated', (data) => {
 
 // Kích hoạt tính năng kéo chuột cho các Modal
 function initDraggableModals() {
+  const hqHeader = document.getElementById('hqHeader') || document.querySelector('#hostQuizCard .hq-header');
+  const hqCard = document.getElementById('hostQuizCard');
+  if (hqHeader && hqCard) {
+    makeModalDraggable(hqHeader, hqCard);
+  }
+
   const qmmHeader = document.getElementById('qmmHeader') || document.querySelector('#modalQuestionManager .qmm-header');
   const qmmCard = document.querySelector('#modalQuestionManager .question-manager-modal');
   if (qmmHeader && qmmCard) {
