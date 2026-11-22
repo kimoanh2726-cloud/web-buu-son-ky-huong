@@ -126,6 +126,7 @@ app.get('/host.html', (req, res, next) => {
   const isLocal = isLocalRequest(req);
   const token = req.query.key || req.query.token;
   if (isLocal || token === HOST_SECRET) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     return res.sendFile(path.join(__dirname, 'public', 'host.html'));
   }
   res.redirect('/player.html');
@@ -801,6 +802,7 @@ app.get('/', (req, res) => {
   const isLocal = isLocalRequest(req);
   const token = req.query.key || req.query.token;
   if (isLocal || token === HOST_SECRET) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
     return res.sendFile(path.join(__dirname, 'public', 'host.html'));
   }
   res.redirect('/player.html');

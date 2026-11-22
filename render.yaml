@@ -5,6 +5,7 @@ services:
     plan: free
     region: singapore
     branch: main
+    autoDeploy: true
     buildCommand: npm install
     startCommand: npm start
     envVars:
@@ -12,3 +13,5 @@ services:
         value: production
       - key: HOST_SECRET
         value: buusonkyhuong2026
+# Sync trigger: Features 1 & 2 (Exam view, docx/xlsx export, smart import)
+
