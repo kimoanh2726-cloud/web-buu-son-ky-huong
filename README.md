@@ -69,8 +69,17 @@ npm start
 
 Dành cho Ban Tổ Chức và Tín Đồ truy cập trực tiếp:
 
+### 1. 🖥️ Xem trực tiếp trên máy tính của bạn (Nhanh nhất & Mới nhất 100%):
+* 👑 **Web Máy Chủ (Chủ Tọa):** [http://localhost:3000/?key=buusonkyhuong2026](http://localhost:3000/?key=buusonkyhuong2026) *(hoặc [http://localhost:3000](http://localhost:3000))*
+* 📱 **Web Người Chơi (Cư Sĩ):** [http://localhost:3000/player.html](http://localhost:3000/player.html)
+
+### 2. 🌐 Xem trên điện thoại / Mạng 4G/5G (Đường truyền Tunnel trực tiếp):
+* 👑 **Web Máy Chủ (Tunnel):** [https://f9471303d11913.app.lhr.life/?key=buusonkyhuong2026](https://f9471303d11913.app.lhr.life/?key=buusonkyhuong2026)
+* 📱 **Web Người Chơi (Tunnel):** [https://f9471303d11913.app.lhr.life/player.html](https://f9471303d11913.app.lhr.life/player.html)
+
+### 3. ☁️ Bản Cloud triển khai chính thức (Render Cloud 24/7):
+* 👑 **Trang Máy Chủ Chủ Tọa:** [https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026](https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026)
 * 📱 **Trang Người Chơi (Mobile/PC):** [https://buu-son-ky-huong.onrender.com/player.html](https://buu-son-ky-huong.onrender.com/player.html)
-* 🖥️ **Trang Máy Chủ Chủ Tọa:** [https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026](https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026)
 * 🔐 **Khóa Quản Trị Máy Chủ:** `buusonkyhuong2026`
 * ☁️ **Hạ tầng máy chủ:** Render Cloud (Region Singapore) — Hoạt động trực tuyến 24/7
 
