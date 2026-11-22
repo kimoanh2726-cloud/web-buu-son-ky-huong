@@ -1352,9 +1352,113 @@ function escapeHtml(str) {
     .replace(/'/g, '&#039;');
 }
 
+// ============================================================================
+// HỖ TRỢ KÉO THẢ DI CHUYỂN BẢNG MODAL THEO CHUỘT (DRAGGABLE MODALS)
+// ============================================================================
+function makeModalDraggable(handleEl, modalEl) {
+  if (!handleEl || !modalEl) return;
+
+  let isDragging = false;
+  let startX = 0, startY = 0;
+  let initLeft = 0, initTop = 0;
+
+  handleEl.style.cursor = 'grab';
+
+  const onDragStart = (clientX, clientY, e) => {
+    // Không kéo khi click trúng nút bấm, ô nhập hoặc link
+    if (e.target.closest('button') || e.target.closest('input') || e.target.closest('textarea') || e.target.closest('a')) {
+      return;
+    }
+
+    isDragging = true;
+    handleEl.style.cursor = 'grabbing';
+
+    // Đổi sang fixed coordinates để di chuyển tự do khắp màn hình
+    const rect = modalEl.getBoundingClientRect();
+    modalEl.style.position = 'fixed';
+    modalEl.style.margin = '0';
+    modalEl.style.left = `${rect.left}px`;
+    modalEl.style.top = `${rect.top}px`;
+    modalEl.style.transform = 'none';
+
+    startX = clientX;
+    startY = clientY;
+    initLeft = rect.left;
+    initTop = rect.top;
+
+    document.body.style.userSelect = 'none';
+    if (e.cancelable) e.preventDefault();
+  };
+
+  const onDragMove = (clientX, clientY) => {
+    if (!isDragging) return;
+    const dx = clientX - startX;
+    const dy = clientY - startY;
+
+    let newLeft = initLeft + dx;
+    let newTop = initTop + dy;
+
+    // Giữ cho modal luôn nằm trong tầm nhìn của màn hình
+    const modalW = modalEl.offsetWidth || 400;
+    const minVisible = 80;
+
+    newLeft = Math.max(-modalW + minVisible, Math.min(newLeft, window.innerWidth - minVisible));
+    newTop = Math.max(0, Math.min(newTop, window.innerHeight - 50));
+
+    modalEl.style.left = `${newLeft}px`;
+    modalEl.style.top = `${newTop}px`;
+  };
+
+  const onDragEnd = () => {
+    if (isDragging) {
+      isDragging = false;
+      handleEl.style.cursor = 'grab';
+      document.body.style.userSelect = '';
+    }
+  };
+
+  // Bắt sự kiện chuột (Mouse Events)
+  handleEl.addEventListener('mousedown', (e) => onDragStart(e.clientX, e.clientY, e));
+  window.addEventListener('mousemove', (e) => onDragMove(e.clientX, e.clientY));
+  window.addEventListener('mouseup', onDragEnd);
+
+  // Bắt sự kiện chạm (Touch Events cho màn hình cảm ứng)
+  handleEl.addEventListener('touchstart', (e) => {
+    if (e.touches.length === 1) {
+      onDragStart(e.touches[0].clientX, e.touches[0].clientY, e);
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchmove', (e) => {
+    if (isDragging && e.touches.length === 1) {
+      onDragMove(e.touches[0].clientX, e.touches[0].clientY);
+    }
+  }, { passive: false });
+
+  window.addEventListener('touchend', onDragEnd);
+}
+
 function openQuestionManagerModal() {
   if (modalQuestionManager) {
     modalQuestionManager.style.display = 'flex';
+    const card = modalQuestionManager.querySelector('.question-manager-modal');
+    if (card) {
+      // Căn giữa tự nhiên nếu chưa bị kéo hoặc bị lệch ngoài màn hình
+      if (!card.style.position || card.style.position !== 'fixed') {
+        card.style.position = 'relative';
+        card.style.left = '';
+        card.style.top = '';
+        card.style.margin = 'auto';
+      } else {
+        const rect = card.getBoundingClientRect();
+        if (rect.top < 0 || rect.top > window.innerHeight - 80 || rect.left > window.innerWidth - 80) {
+          card.style.position = 'relative';
+          card.style.left = '';
+          card.style.top = '';
+          card.style.margin = 'auto';
+        }
+      }
+    }
     if (questionsData.length === 0) {
       socket.emit('host:get_questions');
     } else {
@@ -1990,8 +2094,33 @@ socket.on('quiz:current_question_updated', (data) => {
   showToast('🔔 Câu hỏi đang khảo nghiệm đã được cập nhật nội dung mới!');
 });
 
+// Kích hoạt tính năng kéo chuột cho các Modal
+function initDraggableModals() {
+  const qmmHeader = document.getElementById('qmmHeader') || document.querySelector('#modalQuestionManager .qmm-header');
+  const qmmCard = document.querySelector('#modalQuestionManager .question-manager-modal');
+  if (qmmHeader && qmmCard) {
+    makeModalDraggable(qmmHeader, qmmCard);
+  }
+
+  const qmHeader = document.querySelector('#modalQrManager .qm-header');
+  const qmCard = document.querySelector('#modalQrManager .qr-manager-card');
+  if (qmHeader && qmCard) {
+    makeModalDraggable(qmHeader, qmCard);
+  }
+
+  const shuffleHeader = document.querySelector('#modalShuffle .shuffle-modal-header');
+  const shuffleCard = document.querySelector('#modalShuffle .shuffle-modal-card');
+  if (shuffleHeader && shuffleCard) {
+    makeModalDraggable(shuffleHeader, shuffleCard);
+  }
+}
+
 if (document.readyState === 'loading') {
-  window.addEventListener('DOMContentLoaded', initHost);
+  window.addEventListener('DOMContentLoaded', () => {
+    initHost();
+    initDraggableModals();
+  });
 } else {
   initHost();
+  initDraggableModals();
 }

@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
   
-  <link rel="stylesheet" href="css/host.css?v=20261123_03">
+  <link rel="stylesheet" href="css/host.css?v=20261123_04">
   <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
@@ -848,9 +848,9 @@
          ===================================================================== -->
     <div id="modalQuestionManager" class="modal-backdrop" style="display: none;">
       <div class="modal-card question-manager-modal">
-        <div class="qmm-header">
+        <div class="qmm-header" id="qmmHeader" title="Bấm giữ chuột tại đây để di chuyển bảng">
           <div class="qmm-title-group">
-            <h2>✍️ SOẠN THẢO & QUẢN LÝ CÂU HỎI KHẢO NGHIỆM</h2>
+            <h2>✍️ SOẠN THẢO & QUẢN LÝ CÂU HỎI KHẢO NGHIỆM <span class="qmm-drag-hint" title="Bấm giữ chuột và kéo để dời bảng đi bất kỳ đâu">✥ Kéo để di chuyển</span></h2>
             <p class="qmm-subtitle">Chỉnh sửa nội dung câu hỏi, thay đổi đáp án đúng, thêm câu mới và tự động cập nhật ngay sang máy người chơi.</p>
           </div>
           <button type="button" id="btnCloseQuestionManager" class="modal-close" title="Đóng bảng">✕</button>
@@ -1076,7 +1076,7 @@
 
   </div>
 
-  <script src="js/audio.js?v=20261123_03"></script>
-  <script src="js/host.js?v=20261123_03"></script>
+  <script src="js/audio.js?v=20261123_04"></script>
+  <script src="js/host.js?v=20261123_04"></script>
 </body>
 </html>
