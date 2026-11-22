@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chánh Điện Bửu Sơn Kỳ Hương - Đạo Tràng 50 Chỗ</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/host.css">
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+  <div class="temple-viewport">
+    
+    <!-- 1. HỘP QUÉT MÃ QR (GÓC TRÊN TRÁI) -->
+    <div id="qrBox" class="qr-join-box" title="Nhấp chuột để mở Bảng Quản Lý Mã QR, Phóng To & In Poster">
+      <div class="qr-image-wrap">
+        <img id="qrImage" src="" alt="Mã QR Chánh Điện">
+      </div>
+      <div class="qr-instructions">
+        <div class="qr-box-header">
+          <h3>QUÉT MÃ VÀO CHÁNH ĐIỆN</h3>
+          <span id="qrLiveBadge" class="qr-live-badge local">LAN Wi-Fi</span>
+        </div>
+        <p>Quét mã ➔ Nhập tên ➔ Chọn chỗ ngồi</p>
+        <span id="qrLinkText" class="qr-link-badge">Đang lấy đường dẫn...</span>
+        <span class="qr-click-prompt">🔍 Nhấp để phóng to / quản lý</span>
+      </div>
+    </div>
+
+    <!-- 2. ĐẾM CƯ SĨ & TIỆN ÍCH (GÓC TRÊN PHẢI) -->
+    <div class="top-right-tools">
+      <div id="quizProgressPill" class="quiz-progress-pill">
+        📜 Tiến Độ: <strong id="hostProgressDigits" style="color: #ffd700;">0 / 12</strong> Câu
+      </div>
+      <div id="devoteeCounter" class="devotee-counter-pill">
+        🎋 Đã An Vị: <span id="seatedCountVal" style="color: #ffd700; font-weight: 900;">0</span>/50 | Cư Sĩ: <span id="playerCountVal">0</span>
+      </div>
+      <button id="btnToggleQuizBoard" class="btn-tool" style="display: none;" title="Bật/Tắt hiển thị bảng câu hỏi">
+        📜 Bật/Tắt Bảng Câu Hỏi
+      </button>
+      <button id="btnOpenTop3Host" class="btn-tool" style="display: none;" title="Xem Bảng Vàng Top 3">
+        🏆 Top 3 Bảng Vàng
+      </button>
+      <button id="btnHostBell" class="btn-tool btn-bell-highlight" title="Thỉnh đại hồng chung">
+        🔔 Thỉnh Chuông (Câu 1/12)
+      </button>
+      <button id="btnFullscreen" class="btn-tool" title="Toàn màn hình">
+        ⛶ Toàn Màn Hình
+      </button>
+    </div>
+
+    <!-- 3. BÀN THỜ TAM BẢO THIẾT KẾ NỘI TẠI TRONG GAME (NATIVE GAME ART 100%) -->
+    <section class="altar-section">
+      <div class="altar-stage-container">
+        <svg class="altar-game-svg" viewBox="0 0 1000 480" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <!-- Gradient Trần Điều Đỏ Nhung -->
+            <radialGradient id="gradTranDieu" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#b81818" />
+              <stop offset="70%" stop-color="#8a1010" />
+              <stop offset="100%" stop-color="#540808" />
+            </radialGradient>
+
+            <!-- Gradient Rèm Đỏ Lụa -->
+            <linearGradient id="gradCurtain" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%" stop-color="#931313" />
+              <stop offset="25%" stop-color="#c92222" />
+              <stop offset="50%" stop-color="#730e0e" />
+              <stop offset="75%" stop-color="#b81a1a" />
+              <stop offset="100%" stop-color="#590a0a" />
+            </linearGradient>
+
+            <!-- Gradient Khung Gỗ Mun -->
+            <linearGradient id="gradWood" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4a2d1a" />
+              <stop offset="50%" stop-color="#2a170d" />
+              <stop offset="100%" stop-color="#140a05" />
+            </linearGradient>
+
+            <!-- Gradient Chuông Bát Đồng Vàng -->
+            <radialGradient id="gradBell" cx="40%" cy="35%" r="65%">
+              <stop offset="0%" stop-color="#fff5cc" />
+              <stop offset="30%" stop-color="#ffd700" />
+              <stop offset="70%" stop-color="#c99700" />
+              <stop offset="100%" stop-color="#6e5000" />
+            </radialGradient>
+
+            <!-- Gradient Đèn Búp Sen Đỏ -->
+            <radialGradient id="gradLotusLamp" cx="50%" cy="40%" r="60%">
+              <stop offset="0%" stop-color="#ffaaaa" />
+              <stop offset="40%" stop-color="#ff2200" />
+              <stop offset="90%" stop-color="#8a0c0c" />
+            </radialGradient>
+
+            <!-- Gradient Men Ngọc Bích Bàn Thờ -->
+            <linearGradient id="gradJade" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#3d6b56" />
+              <stop offset="50%" stop-color="#254738" />
+              <stop offset="100%" stop-color="#142b21" />
+            </linearGradient>
+          </defs>
+
+          <!-- 1. Vách Tường Chánh Điện Cổ Phía Sau -->
+          <rect x="0" y="0" width="1000" height="480" fill="#1f130b" />
+          <!-- Hai Cột Nhà Rường Hai Bên -->
+          <rect x="0" y="0" width="70" height="480" fill="#2d170c" stroke="#120804" stroke-width="2" />
+          <rect x="930" y="0" width="70" height="480" fill="#2d170c" stroke="#120804" stroke-width="2" />
+
+          <!-- 3. Hai Tháp Hoa Tầng Hình Nón (Hoa Cúc Vàng, Đỏ, Trắng) -->
+          <!-- Tháp Hoa Trái -->
+          <g transform="translate(330, 110)">
+            <polygon points="25,0 0,200 50,200" fill="#ffd700" />
+            <ellipse cx="25" cy="50" rx="14" ry="6" fill="#d92b2b" />
+            <ellipse cx="25" cy="90" rx="18" ry="7" fill="#ffd700" />
+            <ellipse cx="25" cy="130" rx="22" ry="8" fill="#d92b2b" />
+            <ellipse cx="25" cy="170" rx="26" ry="9" fill="#ffffff" />
+            <rect x="18" y="200" width="14" height="20" fill="#254738" />
+          </g>
+          <!-- Tháp Hoa Phải -->
+          <g transform="translate(620, 110)">
+            <polygon points="25,0 0,200 50,200" fill="#ffd700" />
+            <ellipse cx="25" cy="50" rx="14" ry="6" fill="#d92b2b" />
+            <ellipse cx="25" cy="90" rx="18" ry="7" fill="#ffd700" />
+            <ellipse cx="25" cy="130" rx="22" ry="8" fill="#d92b2b" />
+            <ellipse cx="25" cy="170" rx="26" ry="9" fill="#ffffff" />
+            <rect x="18" y="200" width="14" height="20" fill="#254738" />
+          </g>
+
+          <!-- 4. KHUNG KHÁM THỜ & BỨC TRẦN ĐIỀU CHÍNH GIỮA (VÔ VI TỐI THƯỢNG) -->
+          <g transform="translate(390, 50)">
+            <!-- Khung Gỗ Mun Bao Ngoài -->
+            <rect x="0" y="0" width="220" height="260" rx="4" fill="url(#gradWood)" stroke="#e5b85c" stroke-width="4" />
+            <!-- Khung Mạ Vàng Trong -->
+            <rect x="8" y="8" width="204" height="244" fill="#140a05" stroke="#d4af37" stroke-width="2" />
+            
+            <!-- Hàng Đèn Led Ngũ Sắc Lấp Lánh Viền Quanh Khung -->
+            <g id="ledFairyLights">
+              <circle cx="16" cy="16" r="3" fill="#ff3333" class="fairy-light" />
+              <circle cx="36" cy="16" r="3" fill="#ffd700" class="fairy-light" />
+              <circle cx="56" cy="16" r="3" fill="#33ffcc" class="fairy-light" />
+              <circle cx="76" cy="16" r="3" fill="#ff33cc" class="fairy-light" />
+              <circle cx="96" cy="16" r="3" fill="#ffd700" class="fairy-light" />
+              <circle cx="116" cy="16" r="3" fill="#ff3333" class="fairy-light" />
+              <circle cx="136" cy="16" r="3" fill="#33ffcc" class="fairy-light" />
+              <circle cx="156" cy="16" r="3" fill="#ffd700" class="fairy-light" />
+              <circle cx="176" cy="16" r="3" fill="#ff3333" class="fairy-light" />
+              <circle cx="204" cy="16" r="3" fill="#33ffcc" class="fairy-light" />
+
+              <circle cx="204" cy="40" r="3" fill="#ffd700" class="fairy-light" />
+              <circle cx="204" cy="65" r="3" fill="#ff3333" class="fairy-light" />
+              <circle cx="204" cy="90" r="3" fill="#33ffcc" class="fairy-light" />
+              <circle cx="204" cy="115" r="3" fill="#ffd700" class="fairy-light" />
+              <circle cx="204" cy="140" r="3" fill="#ff3333" class="fairy-light" />
+              <circle cx="204" cy="165" r="3" fill="#33ffcc" class="fairy-light" />
+              <circle cx="204" cy="190" r="3" fill="#ffd700" class="fairy-light" />
+              <circle cx="204" cy="215" r="3" fill="#ff3333" class="fairy-light" />
+              <circle cx="204" cy="240" r="3" fill="#33ffcc" class="fairy-light" />
+
+              <circle cx="16" cy="40" r="3" fill="#ffd700" class="fairy-light" />
+              <circle cx="16" cy="65" r="3" fill="#ff3333" class="fairy-light" />
+              <circle cx="16" cy="90" r="3" fill="#33ffcc" class="fairy-light" />
+              <circle cx="16" cy="115" r="3" fill="#ffd700" class="fairy-light" />
+              <circle cx="16" cy="140" r="3" fill="#ff3333" class="fairy-light" />
+              <circle cx="16" cy="165" r="3" fill="#33ffcc" class="fairy-light" />
+              <circle cx="16" cy="190" r="3" fill="#ffd700" class="fairy-light" />
+              <circle cx="16" cy="215" r="3" fill="#ff3333" class="fairy-light" />
+              <circle cx="16" cy="240" r="3" fill="#33ffcc" class="fairy-light" />
+            </g>
+
+            <!-- BỨC TRẦN ĐIỀU ĐỎ THẮM NGUYÊN BẢN (KHÔNG TẠC TƯỢNG CỐT) -->
+            <rect x="22" y="22" width="176" height="216" fill="url(#gradTranDieu)" stroke="#9e1818" stroke-width="1" />
+            <!-- Nếp lụa đỏ óng ả nhẹ -->
+            <line x1="60" y1="22" x2="60" y2="238" stroke="rgba(255,255,255,0.08)" stroke-width="6" />
+            <line x1="160" y1="22" x2="160" y2="238" stroke="rgba(0,0,0,0.15)" stroke-width="8" />
+          </g>
+
+          <!-- 5. ĐÔI ĐÈN CHÂN NẾN GỖ MUN CỔ BÚP SEN (HAI BÊN) -->
+          <!-- Đèn Sen Trái -->
+          <g transform="translate(415, 150)">
+            <!-- Búp Sen Thủy Tinh Đỏ Tỏa Sáng -->
+            <path d="M12,0 C2,12 2,24 12,32 C22,24 22,12 12,0 Z" fill="url(#gradLotusLamp)" class="lamp-bulb-flame flame-left" />
+            <circle cx="12" cy="16" r="6" fill="#fff5cc" class="lamp-bulb-flame flame-left" />
+            <!-- Đài sen đỡ bóng đèn -->
+            <path d="M2,32 Q12,38 22,32 L19,42 Q12,46 5,42 Z" fill="#6b3519" stroke="#d4af37" stroke-width="1" />
+            <!-- Thân Tiện Gỗ Mun Cổ Truyền -->
+            <rect x="9" y="42" width="6" height="40" fill="#3b1d0e" />
+            <ellipse cx="12" cy="85" rx="14" ry="6" fill="#542914" stroke="#d4af37" stroke-width="1" />
+            <rect x="8" y="90" width="8" height="35" fill="#3b1d0e" />
+            <ellipse cx="12" cy="128" rx="16" ry="7" fill="#542914" stroke="#d4af37" stroke-width="1" />
+            <rect x="7" y="134" width="10" height="20" fill="#3b1d0e" />
+            <!-- Chân Đế Đèn Rộng -->
+            <path d="M-4,165 Q12,154 28,165 L24,175 Q12,168 0,175 Z" fill="#30160a" stroke="#d4af37" stroke-width="1.5" />
+          </g>
+
+          <!-- Đèn Sen Phải -->
+          <g transform="translate(560, 150)">
+            <path d="M12,0 C2,12 2,24 12,32 C22,24 22,12 12,0 Z" fill="url(#gradLotusLamp)" class="lamp-bulb-flame flame-right" />
+            <circle cx="12" cy="16" r="6" fill="#fff5cc" class="lamp-bulb-flame flame-right" />
+            <path d="M2,32 Q12,38 22,32 L19,42 Q12,46 5,42 Z" fill="#6b3519" stroke="#d4af37" stroke-width="1" />
+            <rect x="9" y="42" width="6" height="40" fill="#3b1d0e" />
+            <ellipse cx="12" cy="85" rx="14" ry="6" fill="#542914" stroke="#d4af37" stroke-width="1" />
+            <rect x="8" y="90" width="8" height="35" fill="#3b1d0e" />
+            <ellipse cx="12" cy="128" rx="16" ry="7" fill="#542914" stroke="#d4af37" stroke-width="1" />
+            <rect x="7" y="134" width="10" height="20" fill="#3b1d0e" />
+            <path d="M-4,165 Q12,154 28,165 L24,175 Q12,168 0,175 Z" fill="#30160a" stroke="#d4af37" stroke-width="1.5" />
+          </g>
+
+          <!-- 6. ĐỈNH HƯƠNG ĐỒNG TAI MÂY (TẦNG TRÊN) -->
+          <g transform="translate(480, 215)">
+            <!-- Khói trầm đỉnh đồng -->
+            <g class="incense-smoke-group">
+              <circle cx="20" cy="-10" r="5" fill="rgba(240,240,240,0.5)" filter="blur(3px)" class="smoke-strand" />
+              <circle cx="20" cy="-15" r="7" fill="rgba(240,240,240,0.4)" filter="blur(4px)" class="smoke-strand" />
+              <circle cx="20" cy="-25" r="9" fill="rgba(240,240,240,0.3)" filter="blur(5px)" class="smoke-strand" />
+            </g>
+            <!-- Nhang cắm -->
+            <line x1="20" y1="10" x2="20" y2="-12" stroke="#a3653b" stroke-width="1.5" />
+            <circle cx="20" cy="-12" r="1.5" fill="#ff5500" />
+            <!-- Thân Đỉnh Đồng Tai Mây -->
+            <ellipse cx="20" cy="20" rx="22" ry="14" fill="#a87c33" stroke="#e0b85c" stroke-width="1.5" />
+            <path d="M-4,18 Q-12,12 -8,25 Q-4,32 4,24 Z" fill="#d4af37" /> <!-- Tai mây trái -->
+            <path d="M44,18 Q52,12 48,25 Q44,32 36,24 Z" fill="#d4af37" /> <!-- Tai mây phải -->
+            <!-- 3 Chân đỉnh -->
+            <rect x="4" y="32" width="5" height="12" rx="2" fill="#7d5921" />
+            <rect x="31" y="32" width="5" height="12" rx="2" fill="#7d5921" />
+            <rect x="18" y="33" width="4" height="13" rx="2" fill="#5e4114" />
+          </g>
+
+          <!-- 7. TẦNG BÀN THỜ GIỮA: ỐP GẠCH MEN NGỌC & BIỂN "TAM BẢO" -->
+          <g transform="translate(370, 280)">
+            <!-- Kệ gỗ ốp gạch gốm men -->
+            <rect x="0" y="0" width="260" height="38" fill="url(#gradJade)" stroke="#8e6037" stroke-width="2" />
+            <!-- Họa tiết hoa văn gạch gốm men cổ -->
+            <rect x="6" y="4" width="248" height="30" fill="none" stroke="#e5b85c" stroke-width="1" stroke-dasharray="8,4" />
+            
+            <!-- BIỂN ĐỀ CHỮ "TAM BẢO" (CHÍNH GIỮA) -->
+            <g transform="translate(90, 8)">
+              <rect x="0" y="0" width="80" height="22" rx="3" fill="#140a05" stroke="#ffffff" stroke-width="1.5" />
+              <text x="40" y="16" font-family="'Noto Serif', serif" font-weight="900" font-size="12" fill="#ffffff" text-anchor="middle" letter-spacing="2">TAM BẢO</text>
+            </g>
+          </g>
+
+          <!-- 8. TẦNG BÀN THỜ TRƯỚC: BÁT NHANG, PHÁP BẢO KHĂN ĐIỀU & CHUÔNG BÁT -->
+          <g transform="translate(250, 318)">
+            <!-- Mặt bàn gỗ lớn -->
+            <rect x="0" y="0" width="500" height="32" fill="#422514" stroke="#754728" stroke-width="2" />
+
+            <!-- BÊN TRÁI: Vật Phẩm Phủ Khăn Điều Đỏ Trên Gối -->
+            <g transform="translate(35, -28)">
+              <!-- Đệm lót -->
+              <ellipse cx="45" cy="40" rx="42" ry="12" fill="#7a1414" stroke="#ffd700" stroke-width="1" />
+              <!-- Tấm lụa điều phủ rủ nếp mềm mại -->
+              <path d="M10,38 C10,12 35,-2 52,2 C72,6 85,22 82,38 C60,42 30,42 10,38 Z" fill="#b81616" stroke="#e02828" stroke-width="1" />
+              <!-- Nếp nhăn lụa -->
+              <path d="M22,35 Q40,18 60,32" stroke="#870c0c" stroke-width="2" fill="none" />
+              <path d="M35,38 Q55,24 75,34" stroke="#870c0c" stroke-width="2" fill="none" />
+            </g>
+
+            <!-- CHÍNH GIỮA: Bát Nhang Đồng Phía Trước & Khói Bay -->
+            <g transform="translate(230, -10)">
+              <!-- Khói bát nhang dưới -->
+              <g class="incense-smoke-group">
+                <circle cx="20" cy="-14" r="5" fill="rgba(240,240,240,0.5)" filter="blur(3px)" class="smoke-strand" />
+                <circle cx="20" cy="-22" r="7" fill="rgba(240,240,240,0.4)" filter="blur(4px)" class="smoke-strand" />
+                <circle cx="20" cy="-34" r="9" fill="rgba(240,240,240,0.3)" filter="blur(5px)" class="smoke-strand" />
+              </g>
+              <line x1="16" y1="10" x2="16" y2="-12" stroke="#b07040" stroke-width="1.5" />
+              <line x1="20" y1="10" x2="20" y2="-16" stroke="#b07040" stroke-width="1.5" />
+              <line x1="24" y1="10" x2="24" y2="-12" stroke="#b07040" stroke-width="1.5" />
+              <circle cx="16" cy="-12" r="1.5" fill="#ff5500" />
+              <circle cx="20" cy="-16" r="1.5" fill="#ff5500" />
+              <circle cx="24" cy="-12" r="1.5" fill="#ff5500" />
+
+              <ellipse cx="20" cy="18" rx="20" ry="12" fill="#c49a45" stroke="#ffe599" stroke-width="1.5" />
+              <rect x="4" y="16" width="32" height="12" fill="#8f6b23" />
+              <ellipse cx="20" cy="28" rx="16" ry="7" fill="#694d13" />
+            </g>
+
+            <!-- BÊN PHẢI: CHUÔNG BÁT ĐỒNG LỚN ĐẶT TRÊN ĐỆM ĐỎ (CÓ THỂ NHẤP CHUỘT THỈNH CHUÔNG) -->
+            <g id="interactiveBellGroup" class="interactive-bell-group" transform="translate(390, -32)" title="🔔 Chuông Bát Tam Bảo (Nhấp để thỉnh chuông)">
+              <!-- Đệm Tròn Màu Đỏ Đỡ Chuông -->
+              <ellipse cx="44" cy="48" rx="44" ry="14" fill="#a81616" stroke="#ffd700" stroke-width="2" />
+              <!-- Thân Chuông Bát Đồng Vàng Óng Ánh -->
+              <path d="M12,42 C12,18 26,4 44,4 C62,4 76,18 76,42 C76,50 12,50 12,42 Z" fill="url(#gradBell)" stroke="#876600" stroke-width="2" />
+              <!-- Miệng Chuông Bo Tròn Dày Dặn -->
+              <ellipse cx="44" cy="42" rx="32" ry="7" fill="#ffeaa3" stroke="#cca100" stroke-width="1" />
+              <!-- Vòng hào quang sáng khi rê chuột -->
+              <circle cx="44" cy="28" r="38" fill="none" stroke="rgba(255,215,0,0.4)" stroke-width="2" stroke-dasharray="6,4" />
+            </g>
+          </g>
+
+          <!-- 9. MẶT TRƯỚC BÀN THỜ: BỨC BÍCH HỌA HOA SEN (LIÊN HOA) NỞ RỘ -->
+          <g transform="translate(300, 350)">
+            <!-- Khung bao bệ thờ -->
+            <rect x="0" y="0" width="400" height="130" fill="#2b170c" stroke="#5e381f" stroke-width="3" />
+            <!-- Nền gạch men ngọc bích -->
+            <rect x="10" y="8" width="380" height="114" rx="4" fill="url(#gradJade)" stroke="#e5b85c" stroke-width="2" />
+
+            <!-- TRANH VẼ HOA SEN HỒNG NỞ RỘ CHÍNH DIỆN -->
+            <g transform="translate(200, 70)">
+              <!-- Lá sen xanh hai bên -->
+              <path d="M-80,15 Q-50,-20 -20,10 Q-50,30 -80,15 Z" fill="#1b593a" stroke="#4ade80" stroke-width="1" />
+              <path d="M80,15 Q50,-20 20,10 Q50,30 80,15 Z" fill="#1b593a" stroke="#4ade80" stroke-width="1" />
+
+              <!-- Đài sen & Cuống sen -->
+              <line x1="0" y1="20" x2="0" y2="48" stroke="#166534" stroke-width="4" />
+
+              <!-- Các cánh hoa sen hồng xòe nở rực rỡ -->
+              <path d="M-36,18 C-42,0 -20,-16 0,-24 C20,-16 42,0 36,18 C18,22 -18,22 -36,18 Z" fill="#f472b6" stroke="#db2777" stroke-width="1.5" />
+              <path d="M-24,14 C-30,-6 -14,-22 0,-32 C14,-22 30,-6 24,14 C12,18 -12,18 -24,14 Z" fill="#fb7185" stroke="#e11d48" stroke-width="1.5" />
+              <!-- Cánh sen búp trung tâm -->
+              <path d="M-12,8 C-18,-12 -8,-32 0,-40 C8,-32 18,-12 12,8 C6,12 -6,12 -12,8 Z" fill="#fda4af" stroke="#f43f5e" stroke-width="1.5" />
+              <!-- Nhụy sen vàng tinh khiết -->
+              <ellipse cx="0" cy="-4" rx="8" ry="4" fill="#fde047" />
+
+              <!-- Hai búp sen nhỏ hai bên -->
+              <path d="M-55,-6 C-62,-18 -52,-28 -48,-32 C-44,-28 -34,-18 -41,-6 Z" fill="#f472b6" stroke="#db2777" stroke-width="1" />
+              <line x1="-48" y1="-6" x2="-35" y2="28" stroke="#166534" stroke-width="2.5" />
+
+              <path d="M55,-6 C62,-18 52,-28 48,-32 C44,-28 34,-18 41,-6 Z" fill="#f472b6" stroke="#db2777" stroke-width="1" />
+              <line x1="48" y1="-6" x2="35" y2="28" stroke="#166534" stroke-width="2.5" />
+            </g>
+          </g>
+
+          <!-- 10. HAI TẤM RÈM ĐỎ LỚN BUÔNG TỪ TRẦN XUỐNG THẮT HOA NƠ ĐỎ HAI BÊN -->
+          <!-- RÈM TRÁI -->
+          <g>
+            <!-- Thân rèm đổ nếp từ góc trên trái xuống điểm thắt nơ (x: 180, y: 320) -->
+            <path d="M0,0 L260,0 C220,120 190,240 180,320 C140,240 90,120 0,0 Z" fill="url(#gradCurtain)" opacity="0.96" />
+            <path d="M0,0 C60,110 120,220 170,320 L190,320 C140,200 90,90 20,0 Z" fill="#e02828" opacity="0.5" />
+
+            <!-- Nơ Hoa Vải Đỏ Cột Rèm (x: 180, y: 320) -->
+            <g transform="translate(180, 320)">
+              <ellipse cx="0" cy="0" rx="22" ry="14" fill="#a81212" stroke="#d4af37" stroke-width="1.5" />
+              <circle cx="0" cy="0" r="8" fill="#e02828" />
+              <path d="M-15,-6 Q0,10 15,-6 Q0,-14 -15,-6 Z" fill="#800a0a" />
+            </g>
+
+            <!-- Đuôi rèm xòe ra sau khi thắt nơ chạy dọc cột trái -->
+            <path d="M175,325 C165,370 155,420 150,480 L195,480 C190,430 185,370 185,325 Z" fill="url(#gradCurtain)" />
+          </g>
+
+          <!-- RÈM PHẢI -->
+          <g>
+            <!-- Thân rèm đổ nếp từ góc trên phải xuống điểm thắt nơ (x: 820, y: 320) -->
+            <path d="M1000,0 L740,0 C780,120 810,240 820,320 C860,240 910,120 1000,0 Z" fill="url(#gradCurtain)" opacity="0.96" />
+            <path d="M1000,0 C940,110 880,220 830,320 L810,320 C860,200 910,90 980,0 Z" fill="#e02828" opacity="0.5" />
+
+            <!-- Nơ Hoa Vải Đỏ Cột Rèm (x: 820, y: 320) -->
+            <g transform="translate(820, 320)">
+              <ellipse cx="0" cy="0" rx="22" ry="14" fill="#a81212" stroke="#d4af37" stroke-width="1.5" />
+              <circle cx="0" cy="0" r="8" fill="#e02828" />
+              <path d="M-15,-6 Q0,10 15,-6 Q0,-14 -15,-6 Z" fill="#800a0a" />
+            </g>
+
+            <!-- Đuôi rèm xòe ra sau khi thắt nơ chạy dọc cột phải -->
+            <path d="M825,325 C835,370 845,420 850,480 L805,480 C810,430 815,370 815,325 Z" fill="url(#gradCurtain)" />
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- BẢNG KHẢO NGHIỆM ĐỒNG BỘ TRÊN MÀN HÌNH CHÍNH (XUẤT HIỆN MỖI KHI THỈNH CHUÔNG) -->
+    <div id="hostQuizCard" class="host-quiz-board" style="display: none;">
+      <div class="hq-header">
+        <div class="hq-header-left">
+          <div class="hq-progress-tag">
+            <span class="hq-lantern">🏮</span> 
+            <span id="hqProgressText" class="hq-progress-text">CÂU 01 / 12</span>
+          </div>
+          <div class="hq-topic" id="hqTopicText">Quẻ Đệ Nhất • Bối Cảnh Khai Đạo</div>
+        </div>
+
+        <div class="hq-header-center">
+          <!-- Đồng Hồ Đếm Ngược & Thanh Giây -->
+          <div class="hq-timer-badge">
+            ⏳ <span id="hqTimerDigits">25</span>s
+            <div class="hq-timer-bar-wrap">
+              <div id="hqTimerBar" class="hq-timer-bar"></div>
+            </div>
+          </div>
+
+          <!-- Nút Chỉnh Nhanh Thời Gian Người Chơi Trả Lời (Tác động tức thì máy người chơi) -->
+          <div class="hq-time-adjust-group" title="Cộng/Trừ thời gian cho toàn bộ người chơi ngay lập tức">
+            <span class="hq-time-label">Chỉnh Giây:</span>
+            <button class="btn-hq-time" data-delta="10" title="Cộng thêm 10 giây">+10s</button>
+            <button class="btn-hq-time" data-delta="15" title="Cộng thêm 15 giây">+15s</button>
+            <button class="btn-hq-time" data-delta="-5" title="Trừ bớt 5 giây">-5s</button>
+          </div>
+        </div>
+
+        <div class="hq-header-right">
+          <!-- Chuyển hoặc Quay lại câu hỏi trước -->
+          <button id="btnHqPrev" class="btn-hq-btn-nav" title="Quay lại câu hỏi trước">◀ Câu Trước</button>
+          <button id="btnHqNext" class="btn-hq-btn-nav" title="Chuyển sang câu hỏi kế tiếp">Câu Sau ➔</button>
+          <!-- Nút tắt / ẩn bảng câu hỏi để xem Chánh Điện -->
+          <button id="btnCloseHq" class="btn-hq-close" title="Ẩn bảng câu hỏi (Bật lại bằng nút trên góc phải)">✕ Ẩn Bảng</button>
+        </div>
+      </div>
+
+      <div class="hq-question-body" id="hqQuestionText">
+        Nội dung câu hỏi khảo nghiệm...
+      </div>
+
+      <div class="hq-options-grid" id="hqOptionsGrid">
+        <!-- 4 Lựa chọn A, B, C, D -->
+      </div>
+
+      <!-- Khung lời giải nghĩa tâm linh (Tự động mở khi hết thời gian) -->
+      <div id="hqExplanationWrap" class="hq-explanation-wrap" style="display: none;">
+        <div class="hq-expl-title">💡 Ý NGHĨA GIÁO LÝ ĐỨC PHẬT THẦY TÂY AN:</div>
+        <div id="hqExplanationText" class="hq-expl-content"></div>
+      </div>
+
+      <!-- Thanh trạng thái & Nút thỉnh chuông tiếp theo -->
+      <div class="hq-footer-bar">
+        <div id="hqStatusText" class="hq-status-note">Đang mở thời khắc cho các cư sĩ an vị chọn đáp án...</div>
+        
+        <div class="hq-footer-actions">
+          <div class="hq-custom-time-setter">
+            <input type="number" id="inputHqCustomSecs" min="5" max="180" value="25" class="hq-custom-input" title="Nhập số giây muốn đặt">
+            <button id="btnApplyHqSecs" class="btn-hq-apply-sec">Đặt Lại Giây</button>
+          </div>
+          <button id="btnHqNextBell" class="btn-hq-bell-next" style="display: none;">
+            🔔 THỈNH CHUÔNG SANG CÂU TIẾP THEO ➔
+          </button>
+          <button id="btnHqMinimizeBottom" class="btn-hq-btn-nav">
+            👁️ Ẩn Xem Chánh Điện
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- BẢNG VÀNG TOP 3 THỦ KHOA SAU KHI HOÀN THÀNH (VẪN ĐI LẠI ĐƯỢC CHÁNH ĐIỆN) -->
+    <div id="hostTop3Card" class="host-top3-floating-card" style="display: none;">
+      <div class="top3-card-header">
+        <div class="top3-title-wrap">
+          <span class="top3-trophy-icon">🏆</span>
+          <div>
+            <h3 class="top3-title">BẢNG VÀNG TAM VỊ THỦ KHOA</h3>
+            <p class="top3-sub">Top 3 Cư Sĩ Công Đức Cao Nhất Đạo Tràng</p>
+          </div>
+        </div>
+        <button id="btnCloseTop3Host" class="btn-close-top3" title="Ẩn để rảo bước quan sát Chánh Điện">✕ Thu Nhỏ</button>
+      </div>
+
+      <div class="top3-podium-row">
+        <!-- Á Quân #2 -->
+        <div class="top3-item rank-2">
+          <div class="top3-crown">🥈</div>
+          <div class="top3-avatar-icon">🎋</div>
+          <div id="hostTop3Name2" class="top3-name">—</div>
+          <div id="hostTop3Seat2" class="top3-seat">Chiếu —</div>
+          <div id="hostTop3Score2" class="top3-score">0đ</div>
+          <span class="top3-badge">Á QUÂN</span>
+        </div>
+
+        <!-- Quán Quân #1 -->
+        <div class="top3-item rank-1">
+          <div class="top3-crown">👑</div>
+          <div class="top3-avatar-icon">🪷</div>
+          <div id="hostTop3Name1" class="top3-name">—</div>
+          <div id="hostTop3Seat1" class="top3-seat">Chiếu —</div>
+          <div id="hostTop3Score1" class="top3-score">0đ</div>
+          <span class="top3-badge champion">ĐẠI QUÁN QUÂN</span>
+        </div>
+
+        <!-- Quý Quân #3 -->
+        <div class="top3-item rank-3">
+          <div class="top3-crown">🥉</div>
+          <div class="top3-avatar-icon">🎋</div>
+          <div id="hostTop3Name3" class="top3-name">—</div>
+          <div id="hostTop3Seat3" class="top3-seat">Chiếu —</div>
+          <div id="hostTop3Score3" class="top3-score">0đ</div>
+          <span class="top3-badge">QUÝ QUÂN</span>
+        </div>
+      </div>
+
+      <div class="top3-actions-row">
+        <button id="btnOpenFullLeaderboard" class="btn-top3-act btn-gold">
+          📜 Xem Chi Tiết Toàn Bộ Cư Sĩ
+        </button>
+        <button id="btnHostRestartFromTop3" class="btn-top3-act btn-restart">
+          🔄 KHỞI ĐỘNG LẠI TỪ ĐẦU
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. KHU VỰC SÀN ĐẠO TRÀNG 50 CHỖ & DI CHUYỂN -->
+    <main class="temple-hall-floor">
+      <!-- Lối đi chính giữa dẫn lên bệ Sen bàn thờ -->
+      <div class="central-aisle">
+        <span class="aisle-text">TRUNG ĐẠO HÀNH CHIÊM BÁI</span>
+      </div>
+
+      <!-- Cửa Chánh Điện nơi cư sĩ bước vào -->
+      <div class="temple-door-entrance">
+        🚪 CỬA VÀO CHÁNH ĐIỆN
+      </div>
+
+      <!-- 50 chiếc chiếu cố định trên sàn -->
+      <div id="seatsLayer"></div>
+
+      <!-- Các cư sĩ đang đi lại hoặc đã ngồi an vị -->
+      <div id="walkersLayer"></div>
+    </main>
+
+    <!-- 5. BẢNG ĐIỀU KHIỂN DÀNH CHO BẠN (GIA HẠN THỜI GIAN) -->
+    <footer class="host-control-dock">
+      <div class="dock-left-group">
+        <div class="timer-large-box">
+          <span style="font-size: 16px;">⏳</span>
+          <span id="timerDigits" class="timer-digits-large">07:00</span>
+        </div>
+
+        <div class="dock-time-buttons">
+          <span style="font-size: 11px; color: #d4af37; font-weight: 700;">Gia Hạn:</span>
+          <button class="btn-extend-time" data-seconds="60">+1 Phút</button>
+          <button class="btn-extend-time" data-seconds="180">+3 Phút</button>
+          <button class="btn-extend-time" data-seconds="300">+5 Phút</button>
+
+          <div class="custom-time-input-wrap">
+            <input type="number" id="customMinutesInput" class="custom-time-input" placeholder="Phút" min="1" max="60" value="2">
+            <button id="btnApplyCustomTime" class="btn-apply-custom">+ Thêm</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="dock-right-actions">
+        <button id="btnToggleQuizDock" class="btn-tool" style="display: none;">📜 Bật/Tắt Câu Hỏi</button>
+        <button id="btnTogglePause" class="btn-tool">⏸ Tạm Dừng</button>
+        <button id="btnStartGame" class="btn-action-primary">🔔 THỈNH CHUÔNG (CÂU 1/12)</button>
+        <button id="btnRestartGame" class="btn-tool btn-restart-highlight" style="display: none;" title="Khởi động lại toàn bộ game từ đầu">🔄 Chơi Lại Từ Đầu</button>
+        <button id="btnEndGame" class="btn-tool" style="color: #ff8888; border-color: #aa3333; display: none;">🛑 Kết Thúc Sớm</button>
+      </div>
+    </footer>
+
+    <!-- Thông báo nổi -->
+    <div id="toastNotice" class="toast-notice"></div>
+
+    <!-- 6. MODAL BẢNG VÀNG TUYÊN DƯƠNG -->
+    <div id="modalLeaderboard" class="leaderboard-modal">
+      <div class="leaderboard-card">
+        <h2 style="font-family: var(--font-title); color: #8b1414; font-size: 24px; font-weight: 900; margin-bottom: 4px;">
+          ĐẠI LỄ TUYÊN DƯƠNG CÔNG ĐỨC
+        </h2>
+        <p style="font-size: 12.5px; color: #5a3821; font-style: italic;">
+          “Bảng Vàng Vinh Danh Cư Sĩ Thông Tuệ • Học Phật Tu Nhân • Tứ Ân Vẹn Giữ”
+        </p>
+
+        <div class="podium-wrap">
+          <div class="podium-col podium-rank-2">
+            <div style="font-size: 26px;">🥈</div>
+            <div class="podium-pillar">
+              <div id="podiumName2" style="font-weight: 700; color: #ffd700; font-size: 12.5px;">—</div>
+              <div id="podiumScore2" style="font-size: 11px;">0 Điểm</div>
+              <div style="font-size: 9px; opacity: 0.8; margin-top: 3px;">Á Quân</div>
+            </div>
+          </div>
+
+          <div class="podium-col podium-rank-1">
+            <div style="font-size: 32px;">👑</div>
+            <div class="podium-pillar">
+              <div id="podiumName1" style="font-weight: 900; color: #ffd700; font-size: 13.5px;">—</div>
+              <div id="podiumScore1" style="font-size: 12px; font-weight: 700;">0 Điểm</div>
+              <div style="font-size: 10px; font-weight: 700; color: #fff; margin-top: 3px;">ĐẠI QUÁN QUÂN</div>
+            </div>
+          </div>
+
+          <div class="podium-col podium-rank-3">
+            <div style="font-size: 26px;">🥉</div>
+            <div class="podium-pillar">
+              <div id="podiumName3" style="font-weight: 700; color: #ffd700; font-size: 12.5px;">—</div>
+              <div id="podiumScore3" style="font-size: 11px;">0 Điểm</div>
+              <div style="font-size: 9px; opacity: 0.8; margin-top: 3px;">Quý Quân</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="max-height: 200px; overflow-y: auto; margin-top: 16px; border-top: 1px solid #d4c1a5; padding-top: 10px;">
+          <table style="width: 100%; border-collapse: collapse; font-size: 12.5px;">
+            <thead>
+              <tr style="color: #731313; border-bottom: 2px solid #8e2b2b;">
+                <th style="padding: 5px; text-align: center;">Hạng</th>
+                <th style="padding: 5px; text-align: left;">Cư Sĩ</th>
+                <th style="padding: 5px; text-align: center;">Vị Trí Chiếu</th>
+                <th style="padding: 5px; text-align: right;">Công Đức</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboardTableBody"></tbody>
+          </table>
+        </div>
+
+        <div style="margin-top: 20px;">
+          <button id="btnPlayAgain" class="btn-action-primary" style="padding: 9px 24px;">
+            🎋 Mở Lễ Khảo Nghiệm Mới
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. FULLSCREEN QR PROJECTION OVERLAY (CHIẾU MÁY CHIẾU / QUAN SÁT TỪ XA) -->
+    <div id="fullscreenQrOverlay" class="fullscreen-qr-overlay" style="display: none;">
+      <button id="btnCloseFullscreenQr" class="btn-close-fs-qr" title="Đóng toàn màn hình (Esc)">✕</button>
+      <div class="fs-qr-container">
+        <div class="fs-qr-sacred-header">
+          <div class="fs-lotus-icon">🪷</div>
+          <h1 class="fs-temple-title">CHÁNH ĐIỆN BỬU SƠN KỲ HƯƠNG</h1>
+          <p class="fs-temple-sub">QUÉT MÃ ĐỂ VÀO CHIÊM BÁI & KHẢO NGHIỆM GIÁO LÝ</p>
+        </div>
+        <div class="fs-qr-frame">
+          <img id="fullscreenQrImg" src="" alt="Mã QR Toàn Màn Hình">
+        </div>
+        <div class="fs-qr-link-badge-wrap">
+          <span id="fsQrLinkText" class="fs-qr-link-text">Đang lấy đường dẫn...</span>
+          <button id="btnCopyFsLink" class="btn-copy-small" title="Sao chép đường dẫn">📋 Sao Chép</button>
+        </div>
+        <div class="fs-qr-instructions">
+          <div class="fs-step"><span class="step-num">1</span> Dùng Camera điện thoại hoặc Zalo quét mã</div>
+          <div class="fs-step"><span class="step-num">2</span> Nhập Họ tên / Pháp danh</div>
+          <div class="fs-step"><span class="step-num">3</span> Chọn đệm chiếu cói an vị chiêm bái</div>
+        </div>
+        <div class="fs-qr-footer">
+          <button id="btnDownloadPosterFs" class="btn-gold-action">📥 Tải Poster A4 In Ấn (HD)</button>
+          <button id="btnOpenQrManagerFromFs" class="btn-tool" style="font-size: 13px; padding: 8px 16px;">⚙️ Cài Đặt Mạng & Đường Dẫn</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. MODAL QUẢN LÝ MÃ QR & KẾT NỐI TOÀN CẦU -->
+    <div id="modalQrManager" class="qr-manager-modal" style="display: none;">
+      <div class="qr-manager-card">
+        <div class="qm-header">
+          <div class="qm-header-title">
+            <span style="font-size: 20px;">⚙️</span>
+            <h2>QUẢN LÝ MÃ QR & KẾT NỐI TOÀN CẦU</h2>
+          </div>
+          <button id="btnCloseQrManager" class="btn-close-modal" title="Đóng bảng">✕</button>
+        </div>
+        
+        <div class="qm-body">
+          <!-- Cột trái: QR Code Preview & Thao tác nhanh -->
+          <div class="qm-qr-preview-col">
+            <div class="qm-qr-frame">
+              <img id="modalQrImg" src="" alt="Mã QR">
+            </div>
+            <div id="qmStatusPill" class="qm-status-pill local">
+              <span id="qmStatusDot" class="status-dot"></span>
+              <span id="qmStatusText">Mạng Nội Bộ (LAN Wi-Fi)</span>
+            </div>
+            <div class="qm-preview-actions">
+              <button id="btnOpenFullscreenFromModal" class="btn-qm-action btn-qm-primary">
+                ⛶ Phóng To Chiếu Màn Hình
+              </button>
+              <button id="btnDownloadPosterModal" class="btn-qm-action btn-qm-gold">
+                📥 Tải Poster A4 In Ấn (HD)
+              </button>
+            </div>
+          </div>
+
+          <!-- Cột phải: Cấu hình kết nối & Tùy biến link -->
+          <div class="qm-settings-col">
+            <div class="qm-section">
+              <h3>🌐 KẾT NỐI TOÀN CẦU (INTERNET 4G / 5G)</h3>
+              <p class="qm-desc">
+                Bật tính năng này để mọi người chơi ở bất kỳ đâu (dùng 4G, 5G hoặc mạng Wi-Fi khác) đều quét được mã QR tham gia mà không cần chung mạng Wi-Fi với máy chủ.
+              </p>
+              <div class="qm-tunnel-control">
+                <button id="btnToggleTunnel" class="btn-tunnel-toggle">
+                  <span id="btnTunnelIcon">🚀</span>
+                  <span id="btnTunnelText">Bật Mạng Toàn Cầu (Public HTTPS)</span>
+                </button>
+                <div id="tunnelSpinner" class="tunnel-spinner" style="display: none;">
+                  <span class="spinner-circle"></span> Đang khởi tạo đường truyền HTTPS bảo mật...
+                </div>
+              </div>
+            </div>
+
+            <div class="qm-section">
+              <h3>🔗 ĐƯỜNG DẪN THAM GIA HIỆN TẠI</h3>
+              <div class="qm-input-group">
+                <input type="text" id="inputCustomJoinUrl" class="qm-input" placeholder="https://...">
+                <button id="btnCopyJoinUrl" class="btn-copy-input">📋 Sao Chép</button>
+                <button id="btnApplyCustomUrl" class="btn-apply-url">Cập Nhật QR</button>
+              </div>
+              <p class="qm-sub-note">Bạn cũng có thể dán đường dẫn tên miền riêng hoặc tunnel khác nếu cần.</p>
+            </div>
+
+            <div class="qm-section">
+              <h3>ℹ️ HƯỚNG DẪN DÀNH CHO BAN TỔ CHỨC</h3>
+              <ul class="qm-guide-list">
+                <li>📌 <strong>Trình chiếu:</strong> Nhấn <em>"Phóng To Chiếu Màn Hình"</em> để chiếu mã QR lớn lên màn hình máy chiếu tại giảng đường.</li>
+                <li>🖨️ <strong>In ấn:</strong> Nhấn <em>"Tải Poster A4 In Ấn (HD)"</em> để xuất ảnh poster chất lượng cao dán cửa Chánh Điện.</li>
+                <li>📱 <strong>Người chơi:</strong> Quét mã bằng Zalo hoặc Ứng dụng Camera trên mọi điện thoại thông minh.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="js/audio.js"></script>
+  <script src="js/host.js"></script>
+</body>
+</html>

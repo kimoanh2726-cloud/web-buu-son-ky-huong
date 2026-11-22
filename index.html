@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Bửu Sơn Kỳ Hương - Vấn Đạo Rút Quẻ</title>
+  
+  <!-- Phông chữ Thư Pháp & Cổ Điển -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;900&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div class="temple-frame">
+    <!-- THANH TIÊU ĐỀ & ĐIỀU HƯỚNG TRÊN CÙNG -->
+    <header class="header-bar">
+      <div class="brand-badge">
+        <div class="brand-logo">香</div>
+        <div class="brand-text">
+          <h1>Bửu Sơn Kỳ Hương</h1>
+          <p>Đạo Khẩn Hoang Nam Bộ • Học Phật Tu Nhân</p>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <button id="btnBellChime" class="btn-icon" title="Thỉnh chuông thanh tịnh">
+          🔔 <span>Thỉnh Chuông</span>
+        </button>
+        <button id="btnAudioToggle" class="btn-icon" title="Bật / Tắt âm thanh">
+          🔊 <span>Âm thanh</span>
+        </button>
+        <button id="btnShowTalisman" class="btn-icon" title="Xem Lòng Phái quy y">
+          📜 <span>Lòng Phái</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- BÀN THỜ TAM BẢO THIẾT KẾ ĐỒ HỌA GAME (NATIVE GAME ART) -->
+    <section class="altar-chamber">
+      <div class="game-altar-frame">
+        <!-- Rèm đỏ buông hai bên thắt nơ -->
+        <div class="altar-drape drape-left"></div>
+        <div class="altar-drape drape-right"></div>
+
+        <!-- Khám thờ Trần Điều trung tâm viền đèn Led -->
+        <div class="altar-tran-dieu-center">
+          <div class="altar-tran-dieu-silk">
+            <span class="altar-title-gold">BỬU SƠN KỲ HƯƠNG</span>
+            <span class="altar-sub-gold">TAM BẢO • VÔ VI</span>
+          </div>
+        </div>
+
+        <!-- Tầng thờ: Đèn sen, Đỉnh đồng & Biển Tam Bảo -->
+        <div class="altar-furniture-tier">
+          <div class="game-lamp lamp-l"></div>
+          <div class="game-censer">
+            <div class="smoke-puff"></div>
+            <div class="smoke-puff"></div>
+          </div>
+          <div class="game-tam-bao-plaque">TAM BẢO</div>
+          <div class="game-bell-bowl"></div>
+          <div class="game-lamp lamp-r"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BẢNG ĐIỂM CÔNG ĐỨC & TIẾN TRÌNH RÚT QUẺ -->
+    <div class="stats-banner">
+      <div class="stat-item">
+        Quẻ Khảo Nghiệm: <span id="statQueCount" class="stat-val">0/12</span>
+      </div>
+      <div class="stat-item" style="border-left: 1px solid rgba(229,184,92,0.3); padding-left: 16px;">
+        Công Đức: <span id="statCongDuc" class="stat-val">0 Điểm</span>
+      </div>
+    </div>
+
+    <!-- KHU VỰC VẬT LÝ: ỐNG XĂM TRE 3D & ĐĨA KEO ÂM DƯƠNG -->
+    <main class="divination-arena">
+      <div class="cylinder-stage">
+        <!-- Ống tre chứa xăm -->
+        <div id="bambooCylinder" class="bamboo-cylinder">
+          <div class="cylinder-label">BỬU SƠN</div>
+        </div>
+
+        <!-- Bó que tre bên trong -->
+        <div class="bamboo-sticks-bundle">
+          <div class="mini-stick"></div>
+          <div class="mini-stick"></div>
+          <div class="mini-stick"></div>
+          <div class="mini-stick"></div>
+          <div class="mini-stick"></div>
+        </div>
+
+        <!-- Thẻ tre đặc biệt sẽ nhô lên khi lắc -->
+        <div id="emergingStick" class="emerging-stick"></div>
+      </div>
+
+      <!-- Đĩa gieo 2 đồng keo âm dương gỗ mun -->
+      <div class="toss-plate" title="Đài Âm Dương xin keo">
+        <div id="keoLeft" class="keo-piece duong" title="Mảnh keo tả"></div>
+        <div id="keoRight" class="keo-piece am" title="Mảnh keo hữu"></div>
+      </div>
+
+      <!-- Khu vực nút bấm lắc & hướng dẫn -->
+      <div class="controls-area">
+        <button id="btnShake" class="btn-shake">
+          🎋 THÀNH TÂM LẮC QUẺ
+        </button>
+
+        <!-- Thanh nạp tiến độ khi lắc giữ chuột -->
+        <div id="shakeProgressBar" class="shake-progress-bar">
+          <div id="shakeProgressFill" class="shake-progress-fill"></div>
+        </div>
+
+        <p class="shake-hint">
+          📱 <em>(Trên điện thoại: Có thể lắc máy thật để rút quẻ)</em>
+        </p>
+      </div>
+    </main>
+
+    <!-- CHÂN TRANG VĂN HÓA -->
+    <footer class="site-footer">
+      <p>Cội nguồn Tứ Đại Trọng Ân: Ân Tổ Tiên • Ân Đất Nước • Ân Tam Bảo • Ân Đồng Bào Nhân Loại</p>
+      <p style="margin-top: 4px; opacity: 0.7;">Khảo nghiệm tri thức giáo lý lịch sử Bửu Sơn Kỳ Hương (Thế kỷ XIX - Nay)</p>
+    </footer>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 1: SỚ LỤC / GIẤY ĐIỆP KHẢO NGHIỆM CÂU HỎI
+       ========================================================================= -->
+  <div id="modalQuestion" class="modal-overlay">
+    <div class="scroll-card">
+      <!-- Tiêu đề quẻ -->
+      <div class="scroll-header">
+        <div id="modalQueTitle" class="scroll-que-title">Quẻ Đệ Nhất - Bối Cảnh Khai Đạo</div>
+        <div id="modalQueTag" class="scroll-que-tag">Câu 1/12 Khảo Nghiệm</div>
+      </div>
+
+      <!-- Nén nhang đếm ngược 45 giây -->
+      <div class="incense-timer-wrap">
+        <span class="timer-label">⏳ Nén Nhang Chiêm Nghiệm:</span>
+        <div class="incense-bar">
+          <div id="timerFill" class="incense-fill"></div>
+        </div>
+        <span id="timerDigits" class="timer-digits">45s</span>
+      </div>
+
+      <!-- Nội dung câu hỏi khảo nghiệm -->
+      <div id="questionBody" class="question-body">
+        Đang thỉnh câu hỏi...
+      </div>
+
+      <!-- 4 Lựa chọn phương án -->
+      <div id="optionsGrid" class="options-grid"></div>
+
+      <!-- Bảng Luận Giải Chi Tiết & Ấn Triện Chu Sa -->
+      <div id="explanationPanel" class="explanation-panel">
+        <!-- Con dấu son đỏ -->
+        <div id="redSealStamp" class="red-seal-stamp">
+          <span id="stampMainText" class="stamp-main">ĐẮC QUẺ</span>
+          <span id="stampSubText" style="font-size: 8px;">CÁT TƯỜNG</span>
+        </div>
+
+        <div class="explanation-title">
+          📜 LỜI VÀNG KHAI SÁNG & LUẬN GIẢI:
+        </div>
+        <div id="explanationText" class="explanation-text"></div>
+      </div>
+
+      <!-- Nút Tiếp Tục -->
+      <div class="modal-footer">
+        <button id="btnNextQue" class="btn-next-que">
+          Tiếp Tục Rút Quẻ ➔
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       MODAL 2: TÍN VẬT LÒNG PHÁI BỬU SƠN KỲ HƯƠNG (CANVAS CHỨNG THƯ)
+       ========================================================================= -->
+  <div id="modalTalisman" class="modal-overlay talisman-modal">
+    <div class="talisman-content">
+      <h2 style="color: #7a1111; font-family: var(--font-title); font-size: 20px;">
+        TÍN VẬT LÒNG PHÁI QUY Y
+      </h2>
+      <p class="talisman-desc">
+        Tấm "Lòng Phái" bằng giấy vàng mực chu sa chứng nhận quá trình vấn đạo, trau dồi giáo lý và tích lũy công đức của bạn.
+      </p>
+
+      <div class="talisman-preview-wrap">
+        <canvas id="talismanCanvas"></canvas>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 12px; margin-top: 14px;">
+        <button id="btnDownloadTalisman" class="btn-icon" style="background: #931313; color: #fff; padding: 10px 20px;">
+          📥 Tải Lòng Phái Về Máy
+        </button>
+        <button id="btnCloseTalisman" class="btn-icon" style="padding: 10px 20px;">
+          Đóng Lại
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Nạp Mã Dữ Liệu & Logic -->
+  <script src="js/data.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
