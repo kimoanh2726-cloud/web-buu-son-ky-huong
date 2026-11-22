@@ -1,5 +1,7 @@
 # 🏮 BỬU SƠN KỲ HƯƠNG — ĐẠO TRÀNG CHÁNH ĐIỆN 50 CHỖ & KHẢO NGHIỆM GIÁO LÝ THỜI GIAN THỰC
 
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/kimoanh2726-cloud/web-buu-son-ky-huong)
+
 > **Nền tảng tương tác thời gian thực (Real-time Multiplayer)** tái hiện không gian Chánh Điện tâm linh Bửu Sơn Kỳ Hương (Phật Thầy Tây An) với 50 chiếu cói cố định, đồng bộ hành vi đi lại - an vị - vấn đạo giáo lý giữa Máy Chủ (Host) và hàng chục người chơi (Player) đồng thời qua Internet (4G/5G/Wi-Fi).
 
 ---
