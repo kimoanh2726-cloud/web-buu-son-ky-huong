@@ -65,10 +65,10 @@ npm start
 
 ---
 
-## 📍 GHIM ĐƯỜNG DẪN TRUY CẬP TRỰC TIẾP (PINNED LINKS)
+## 📍 GHIM ĐƯỜNG DẪN CÔNG KHAI TRUY CẬP TRỰC TIẾP (PINNED LINKS)
 
-* 👑 **Web Máy Chủ (Chủ Tọa):** [http://localhost:3000/?key=buusonkyhuong2026](http://localhost:3000/?key=buusonkyhuong2026)
-* 📱 **Web Người Chơi (Cư Sĩ):** [http://localhost:3000/player.html](http://localhost:3000/player.html)
+* 👑 **Web Máy Chủ (Chủ Tọa):** [https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026](https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026)
+* 📱 **Web Người Chơi (Cư Sĩ):** [https://buu-son-ky-huong.onrender.com/player.html](https://buu-son-ky-huong.onrender.com/player.html)
 
 ---
 

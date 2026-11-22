@@ -13,5 +13,5 @@ services:
         value: production
       - key: HOST_SECRET
         value: buusonkyhuong2026
-# Sync trigger: Features 1 & 2 (Exam view, docx/xlsx export, smart import)
+# Sync trigger: 2026-11-23 02:49 - Public pinned links & late seating sync
 
