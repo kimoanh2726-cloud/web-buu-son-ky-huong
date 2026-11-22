@@ -1385,12 +1385,34 @@ io.on('connection', (socket) => {
 
     const totalOccupied = seats.filter(s => !!s.occupant).length;
 
-    // Gửi xác nhận độc quyền cho người chơi này
+    // Gói dữ liệu câu hỏi hiện tại nếu khảo nghiệm đang diễn ra để người chơi an vị muộn bắt kịp ngay
+    const currentQuizPayload = (quizState.currentIndex >= 0 && quizState.currentIndex < QUESTIONS.length) ? {
+      currentIndex: quizState.currentIndex,
+      questionNumber: quizState.currentIndex + 1,
+      totalQuestions: quizState.totalQuestions,
+      timeLimit: quizState.timeLimit,
+      remainingTime: quizState.remainingTime,
+      isAcceptingAnswers: quizState.isAcceptingAnswers,
+      isRevealed: quizState.isRevealed,
+      currentQuestion: {
+        queSo: QUESTIONS[quizState.currentIndex].que_so,
+        chuDe: QUESTIONS[quizState.currentIndex].chu_de,
+        cauHoi: QUESTIONS[quizState.currentIndex].cau_hoi,
+        cacLuaChon: QUESTIONS[quizState.currentIndex].cac_lua_chon || QUESTIONS[quizState.currentIndex].cacLuaChon,
+        correctAnswer: quizState.isRevealed ? QUESTIONS[quizState.currentIndex].dap_an_dung : null,
+        loiGiai: quizState.isRevealed ? QUESTIONS[quizState.currentIndex].loi_giai : null
+      },
+      hasAnswered: quizState.playerAnswers.has(socket.id),
+      myAnswer: quizState.playerAnswers.get(socket.id) || null
+    } : null;
+
+    // Gửi xác nhận độc quyền cho người chơi này kèm trạng thái khảo nghiệm trực tiếp
     socket.emit('seat:assigned', {
       seatId: targetSeat.id,
       seatNumber: targetSeat.number,
       x: targetSeat.x,
-      y: targetSeat.y
+      y: targetSeat.y,
+      quizState: currentQuizPayload
     });
 
     // Thông báo cho Màn hình chính và tất cả người chơi khác KHÓA ghế này lại ngay lập tức
@@ -1438,7 +1460,34 @@ io.on('connection', (socket) => {
   const handleAnswerSubmit = (socketId, answerIdx) => {
     const player = gameState.players.get(socketId);
     if (!player || !player.isSeated) return;
-    if (!quizState.isAcceptingAnswers) return;
+
+    // Nếu câu hỏi đã đóng hoặc hết thời gian trả lời: Báo ngay kết quả muộn và công bố đáp án cho người chơi, không để treo màn hình
+    if (!quizState.isAcceptingAnswers || quizState.remainingTime <= 0) {
+      if (quizState.currentIndex >= 0 && quizState.currentIndex < QUESTIONS.length) {
+        const qLate = QUESTIONS[quizState.currentIndex];
+        io.to(socketId).emit('quiz:your_result', {
+          status: 'MISSED',
+          selectedOption: parseInt(answerIdx),
+          isCorrect: false,
+          pointsEarned: 0,
+          totalScore: player.score,
+          correctAnswer: qLate.dap_an_dung,
+          loiGiai: qLate.loi_giai
+        });
+        io.to(socketId).emit('quiz:answer_revealed', {
+          questionIndex: quizState.currentIndex,
+          questionNumber: quizState.currentIndex + 1,
+          totalQuestions: quizState.totalQuestions,
+          correctAnswer: qLate.dap_an_dung,
+          loiGiai: qLate.loi_giai,
+          hasNextQuestion: quizState.currentIndex + 1 < quizState.totalQuestions,
+          nextQuestionNumber: quizState.currentIndex + 2,
+          isLate: true
+        });
+      }
+      return;
+    }
+
     if (quizState.playerAnswers.has(socketId)) return; // Tránh nộp 2 lần
 
     const selectedOption = parseInt(answerIdx);

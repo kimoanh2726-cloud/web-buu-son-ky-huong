@@ -550,10 +550,10 @@ btnActionSeat.addEventListener('click', () => {
 
 // Máy chủ xác nhận AN VỊ THÀNH CÔNG
 socket.on('seat:assigned', (data) => {
-  applySeatSuccess(data.seatId, data.seatNumber);
+  applySeatSuccess(data.seatId, data.seatNumber, data.quizState);
 });
 
-function applySeatSuccess(seatId, seatNumber) {
+function applySeatSuccess(seatId, seatNumber, incomingQuizState) {
   isSeated = true;
   if (myPlayer) {
     myPlayer.isSeated = true;
@@ -599,8 +599,72 @@ function applySeatSuccess(seatId, seatNumber) {
   if (navigator.vibrate) navigator.vibrate([100, 50, 150]);
   showToastNotice(`🙏 Bạn đã an vị thành công tại Chiếu số #${seatNumber || seatId}!`);
 
-  // BẮT BUỘC: NẾU CÓ CÂU HỎI ĐANG MỞ, LẬP TỨC MỞ BẢNG CÂU HỎI CHO CƯ SĨ
-  if (isQuestionActive && currentQuizData) {
+  // BẮT BUỘC: ĐỒNG BỘ TIẾN TRÌNH VỚI MÁY CHỦ CHO NGƯỜI CHƠI AN VỊ MUỘN
+  const activeQuiz = incomingQuizState || (isQuestionActive && currentQuizData ? currentQuizData : null);
+
+  if (activeQuiz && activeQuiz.currentIndex >= 0) {
+    if (unseatedWarningBanner) unseatedWarningBanner.style.display = 'none';
+    isQuestionActive = true;
+
+    const qItem = activeQuiz.currentQuestion || activeQuiz;
+    currentQuizData = {
+      questionIndex: activeQuiz.currentIndex,
+      questionNumber: activeQuiz.questionNumber || (activeQuiz.currentIndex + 1),
+      totalQuestions: activeQuiz.totalQuestions || 12,
+      queSo: qItem.queSo || qItem.que_so || '',
+      chuDe: qItem.chuDe || qItem.chu_de || 'Khảo Nghiệm Bửu Sơn Kỳ Hương',
+      cauHoi: qItem.cauHoi || qItem.cau_hoi,
+      cacLuaChon: qItem.cacLuaChon || qItem.cac_lua_chon || [],
+      timeLimit: activeQuiz.timeLimit || 15,
+      remainingTime: activeQuiz.remainingTime !== undefined ? activeQuiz.remainingTime : 0,
+      isAcceptingAnswers: activeQuiz.isAcceptingAnswers,
+      isRevealed: activeQuiz.isRevealed
+    };
+
+    questionRemainingTime = currentQuizData.remainingTime;
+    questionTotalTime = currentQuizData.timeLimit || 15;
+
+    // TRƯỜNG HỢP 1: CÂU HỎI ĐANG CHẠY & CÒN THỜI GIAN NHẬN ĐÁP ÁN (Bắt kịp ngay để tích công đức)
+    if (activeQuiz.isAcceptingAnswers && activeQuiz.remainingTime > 0 && !activeQuiz.isRevealed) {
+      mySelectedOption = -1;
+      openQuizModal();
+      showToastNotice(`🎋 Đã an vị! Bạn đang tham gia Câu #${currentQuizData.questionNumber}!`);
+    } 
+    // TRƯỜNG HỢP 2: AN VỊ KHI CÂU HỎI ĐÃ HẾT GIỜ HOẶC ĐÃ CÔNG BỐ (Xem đáp án/lời giải và chờ câu tiếp)
+    else {
+      openQuizModal();
+      const allBtns = qOptionsList ? qOptionsList.querySelectorAll('.q-opt-btn') : [];
+      allBtns.forEach(b => b.classList.add('disabled'));
+
+      if (mobileQTimer) mobileQTimer.textContent = '0';
+      if (playerTimerBar) playerTimerBar.style.width = '0%';
+
+      const correctAns = (activeQuiz.correctAnswer !== undefined && activeQuiz.correctAnswer !== null) 
+        ? activeQuiz.correctAnswer 
+        : (qItem.correctAnswer !== undefined ? qItem.correctAnswer : null);
+      const explanation = activeQuiz.loiGiai || qItem.loiGiai || qItem.loi_giai || '';
+
+      if (correctAns !== null && correctAns !== undefined) {
+        handleAnswerRevealed({
+          questionIndex: activeQuiz.currentIndex,
+          questionNumber: currentQuizData.questionNumber,
+          totalQuestions: currentQuizData.totalQuestions,
+          correctAnswer: correctAns,
+          loiGiai: explanation,
+          hasNextQuestion: (activeQuiz.currentIndex + 1) < currentQuizData.totalQuestions
+        });
+      }
+
+      if (feedbackBox) feedbackBox.style.display = 'block';
+      if (feedbackStatus) {
+        feedbackStatus.style.color = '#ffd700';
+        feedbackStatus.textContent = '🎋 Bạn an vị sau khi câu này đã hết giờ!';
+      }
+      if (feedbackWaitBell) {
+        feedbackWaitBell.textContent = '🔔 Đang chờ Chủ tọa thỉnh chuông sang câu tiếp theo để cùng tham gia tích công đức...';
+      }
+    }
+  } else if (isQuestionActive && currentQuizData) {
     if (unseatedWarningBanner) unseatedWarningBanner.style.display = 'none';
     openQuizModal();
   }
@@ -863,6 +927,10 @@ function renderQuizOptions(options) {
         showToastNotice('Bạn phải an vị vào chiếu mới có thể trả lời!');
         return;
       }
+      if (questionRemainingTime <= 0) {
+        showToastNotice('⚠️ Thời gian trả lời câu hỏi này đã kết thúc!');
+        return;
+      }
 
       mySelectedOption = optIdx;
 
@@ -902,6 +970,11 @@ socket.on('quiz:tick', (data) => {
   if (playerTimerBar && data.timeLimit) {
     const pct = Math.max(0, (data.remainingTime / data.timeLimit) * 100);
     playerTimerBar.style.width = `${pct}%`;
+  }
+  // Nếu hết giờ mà chưa nộp đáp án: Tự động khóa các nút lựa chọn để tránh bấm nhầm
+  if (data.remainingTime <= 0) {
+    const allBtns = qOptionsList ? qOptionsList.querySelectorAll('.q-opt-btn') : [];
+    allBtns.forEach(b => b.classList.add('disabled'));
   }
 });
 
@@ -963,6 +1036,10 @@ socket.on('quiz:answer_revealed', (data) => {
 function handleAnswerRevealed(data) {
   if (mobileQTimer) mobileQTimer.textContent = '0';
   if (playerTimerBar) playerTimerBar.style.width = '0%';
+
+  // Khóa toàn bộ các nút đáp án
+  const allBtns = qOptionsList ? qOptionsList.querySelectorAll('.q-opt-btn') : [];
+  allBtns.forEach(b => b.classList.add('disabled'));
 
   // Tô xanh đáp án đúng
   const correctBtn = document.getElementById(`q-opt-btn-${data.correctAnswer}`);
