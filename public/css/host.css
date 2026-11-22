@@ -2006,3 +2006,545 @@ body {
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(255,215,0,0.35);
 }
+
+/* ==========================================================================
+   5. CÁC NÚT NHẬN FILE, TRỘN ĐỀ VÀ SOẠN THẢO TẠI KHU VỰC QUÉT MÃ QR
+   ========================================================================== */
+.qr-action-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 4px;
+}
+
+.btn-qr-pill {
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 3px 8px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-qr-import {
+  background: linear-gradient(180deg, #1d6f42, #0e4425);
+  border: 1px solid #4ade80;
+  color: #f0fdf4;
+}
+.btn-qr-import:hover {
+  background: #16a34a;
+  box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-qr-shuffle {
+  background: linear-gradient(180deg, #9a6700, #5a3c00);
+  border: 1px solid #ffd700;
+  color: #fffbeb;
+}
+.btn-qr-shuffle:hover {
+  background: #d97706;
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+  transform: translateY(-1px);
+}
+
+.btn-qr-edit {
+  background: linear-gradient(180deg, #8b1414, #4a0808);
+  border: 1px solid var(--color-gold);
+  color: #ffd700;
+}
+.btn-qr-edit:hover {
+  background: #b91c1c;
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.qr-sub-prompt {
+  font-size: 8.5px;
+  color: #a38166;
+  font-style: italic;
+  margin-top: 2px;
+}
+
+/* Thanh công cụ nhanh gắn nổi cạnh mã QR */
+.qr-companion-toolbar {
+  position: absolute;
+  top: 12px;
+  left: 310px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 100;
+}
+
+.btn-companion-tool {
+  background: rgba(22, 13, 8, 0.94);
+  border: 1.5px solid var(--color-gold);
+  border-radius: 6px;
+  padding: 6px 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #ffd700;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.7);
+  transition: all 0.2s ease;
+  backdrop-filter: blur(4px);
+}
+
+.btn-companion-tool:hover {
+  transform: translateX(3px);
+  border-color: #ffd700;
+  box-shadow: 0 6px 16px rgba(255, 215, 0, 0.35);
+}
+
+.btn-companion-import {
+  border-color: #4ade80;
+  color: #4ade80;
+}
+.btn-companion-import:hover {
+  background: rgba(22, 101, 52, 0.95);
+  color: #fff;
+}
+
+.btn-companion-shuffle {
+  border-color: #fbbf24;
+  color: #fbbf24;
+}
+.btn-companion-shuffle:hover {
+  background: rgba(180, 83, 9, 0.95);
+  color: #fff;
+}
+
+/* Các nút trong Toolbar của Modal Question Manager */
+.btn-import-q {
+  background: rgba(22, 101, 52, 0.8) !important;
+  border-color: #4ade80 !important;
+  color: #4ade80 !important;
+}
+.btn-import-q:hover {
+  background: #16a34a !important;
+  color: #fff !important;
+}
+
+.btn-shuffle-q {
+  background: rgba(180, 83, 9, 0.8) !important;
+  border-color: #fbbf24 !important;
+  color: #fbbf24 !important;
+}
+.btn-shuffle-q:hover {
+  background: #d97706 !important;
+  color: #fff !important;
+}
+
+/* ==========================================================================
+   6. MỤC QUẢN TRỊ CÂU HỎI TRONG MODAL QR MANAGER
+   ========================================================================== */
+.qm-questions-section {
+  background: rgba(22, 10, 5, 0.65);
+  border: 1.5px solid rgba(229, 184, 92, 0.4);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.qm-questions-btn-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 12px 0 10px 0;
+}
+
+.btn-qm-import {
+  background: linear-gradient(180deg, #15803d, #0d5225);
+  border: 1.5px solid #4ade80;
+  color: #ffffff;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-qm-import:hover {
+  background: #16a34a;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(74, 222, 128, 0.4);
+}
+
+.btn-qm-shuffle {
+  background: linear-gradient(180deg, #b45309, #78350f);
+  border: 1.5px solid #ffd700;
+  color: #ffffff;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-qm-shuffle:hover {
+  background: #d97706;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
+}
+
+.btn-qm-edit {
+  background: linear-gradient(180deg, #8b1414, #540808);
+  border: 1.5px solid var(--color-gold);
+  color: #ffd700;
+  padding: 10px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-qm-edit:hover {
+  background: #a31414;
+  color: #fff;
+  transform: translateY(-2px);
+}
+
+/* Vùng Kéo Thả File Câu Hỏi */
+.qm-drop-zone {
+  border: 2px dashed rgba(229, 184, 92, 0.45);
+  background: rgba(40, 20, 10, 0.4);
+  border-radius: 6px;
+  padding: 14px;
+  text-align: center;
+  color: #d1b194;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.qm-drop-zone:hover, .qm-drop-zone.dragover {
+  background: rgba(74, 222, 128, 0.15);
+  border-color: #4ade80;
+  color: #4ade80;
+}
+.qm-drop-zone .drop-icon { font-size: 18px; }
+
+/* ==========================================================================
+   7. MODAL XEM TRƯỚC VÀ ÁP DỤNG THAY ĐỔI CÂU HỎI (.XLSX / .DOCX)
+   ========================================================================== */
+.import-preview-modal {
+  width: 90vw;
+  max-width: 920px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.import-preview-body {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 20px;
+  gap: 12px;
+}
+
+.import-summary-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: rgba(18, 9, 5, 0.75);
+  border: 1px solid rgba(229, 184, 92, 0.3);
+  border-radius: 8px;
+  padding: 10px 16px;
+  align-items: center;
+}
+
+.import-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: #ffebdb;
+}
+
+.meta-val.highlight {
+  color: #ffd700;
+  font-family: monospace;
+}
+
+.file-type-pill {
+  background: #166534;
+  color: #86efac;
+  border: 1px solid #22c55e;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+.count-pill {
+  background: #991b1b;
+  color: #fecaca;
+  border: 1px solid #f87171;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.import-mode-box {
+  background: rgba(30, 16, 9, 0.6);
+  border: 1px solid rgba(229, 184, 92, 0.25);
+  border-radius: 8px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.import-mode-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: #ffd700;
+}
+
+.import-mode-radios {
+  display: flex;
+  gap: 24px;
+}
+
+.import-mode-opt {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #f7ede2;
+  cursor: pointer;
+}
+.import-mode-opt input {
+  accent-color: #ffd700;
+  cursor: pointer;
+}
+
+.import-preview-scroll-wrap {
+  flex: 1;
+  max-height: 48vh;
+  overflow-y: auto;
+  border: 1px solid rgba(229, 184, 92, 0.2);
+  border-radius: 8px;
+  background: rgba(14, 7, 4, 0.6);
+  padding: 10px;
+}
+
+.import-preview-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.import-q-item {
+  background: rgba(28, 15, 9, 0.85);
+  border: 1px solid rgba(229, 184, 92, 0.35);
+  border-radius: 6px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.import-q-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(229, 184, 92, 0.2);
+  padding-bottom: 6px;
+}
+
+.import-q-num {
+  font-family: var(--font-title);
+  color: #ffd700;
+  font-weight: 900;
+  font-size: 12.5px;
+}
+
+.import-q-topic {
+  font-size: 11.5px;
+  color: #caa88b;
+  font-style: italic;
+}
+
+.import-q-body {
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.import-q-opts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.import-q-opt {
+  background: rgba(18, 9, 5, 0.7);
+  border: 1px solid rgba(229, 184, 92, 0.2);
+  border-radius: 5px;
+  padding: 6px 10px;
+  font-size: 12px;
+  color: #ffebdb;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.import-q-opt.is-correct {
+  background: rgba(22, 101, 52, 0.5) !important;
+  border-color: #4ade80 !important;
+  color: #bbf7d0 !important;
+  font-weight: 700;
+}
+
+.import-q-opt.is-correct::after {
+  content: " ✓ ĐÁP ÁN ĐÚNG";
+  font-size: 9px;
+  color: #4ade80;
+  margin-left: auto;
+  font-weight: 900;
+}
+
+.import-q-expl {
+  font-size: 11.5px;
+  color: #ffd700;
+  background: rgba(30, 20, 10, 0.6);
+  border-left: 3px solid var(--color-gold);
+  padding: 4px 8px;
+  border-radius: 0 4px 4px 0;
+  font-style: italic;
+}
+
+.import-preview-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  background: rgba(22, 12, 7, 0.85);
+  border-top: 1.5px solid rgba(229, 184, 92, 0.35);
+}
+
+.footer-note {
+  font-size: 11.5px;
+  color: #ffdeb0;
+  max-width: 50%;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.btn-apply-imported-quiz {
+  background: linear-gradient(180deg, #15803d 0%, #166534 60%, #0d4622 100%);
+  border: 2px solid #86efac;
+  color: #ffffff;
+  font-family: var(--font-title);
+  font-size: 13px;
+  font-weight: 900;
+  padding: 10px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  box-shadow: 0 0 16px rgba(74, 222, 128, 0.5);
+  transition: all 0.25s ease;
+  animation: glowPulseGreen 2s infinite alternate;
+}
+
+@keyframes glowPulseGreen {
+  0% { box-shadow: 0 0 12px rgba(74, 222, 128, 0.4); }
+  100% { box-shadow: 0 0 24px rgba(74, 222, 128, 0.85); }
+}
+
+.btn-apply-imported-quiz:hover {
+  background: #16a34a;
+  transform: translateY(-2px);
+  box-shadow: 0 0 28px rgba(74, 222, 128, 0.9);
+}
+
+/* ==========================================================================
+   8. MODAL TRỘN ĐỀ THI (SHUFFLE)
+   ========================================================================== */
+.shuffle-modal-card {
+  width: 90vw;
+  max-width: 520px;
+}
+
+.shuffle-modal-body {
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.shuffle-desc {
+  font-size: 13px;
+  color: #ffdeb0;
+}
+
+.shuffle-checkboxes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(18, 9, 5, 0.6);
+  border: 1px solid rgba(229, 184, 92, 0.25);
+  border-radius: 8px;
+  padding: 14px;
+}
+
+.shuffle-check-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 12.5px;
+  color: #f7ede2;
+  cursor: pointer;
+}
+.shuffle-check-item input {
+  margin-top: 2px;
+  accent-color: #ffd700;
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}
+
+.shuffle-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(22, 12, 7, 0.85);
+  border-top: 1px solid rgba(229, 184, 92, 0.3);
+}
+
+.btn-confirm-shuffle {
+  background: linear-gradient(180deg, #d97706 0%, #b45309 100%);
+  border: 1.5px solid #ffd700;
+  color: #fff;
+  font-family: var(--font-title);
+  font-weight: 900;
+  font-size: 12px;
+  padding: 8px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.4);
+  transition: all 0.2s;
+}
+.btn-confirm-shuffle:hover {
+  background: #f59e0b;
+  color: #000;
+  transform: translateY(-1px);
+}

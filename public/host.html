@@ -20,11 +20,14 @@
 </head>
 <body>
 
+  <!-- Input nạp file câu hỏi ẩn (Hỗ trợ cả .xlsx, .xls và .docx) -->
+  <input type="file" id="inputQuestionsFile" accept=".xlsx,.xls,.docx" style="display: none;">
+
   <div class="temple-viewport">
     
-    <!-- 1. HỘP QUÉT MÃ QR (GÓC TRÊN TRÁI) -->
-    <div id="qrBox" class="qr-join-box" title="Nhấp chuột để mở Bảng Quản Lý Mã QR, Phóng To & In Poster">
-      <div class="qr-image-wrap">
+    <!-- 1. HỘP QUÉT MÃ QR & ĐIỀU KHIỂN CÂU HỎI (GÓC TRÊN TRÁI) -->
+    <div id="qrBox" class="qr-join-box" title="Nhấp vào để mở Bảng Quản Lý Mã QR, Phóng To & Cài Đặt">
+      <div class="qr-image-wrap" id="qrImageWrap" title="Nhấp để phóng to mã QR">
         <img id="qrImage" src="" alt="Mã QR Chánh Điện">
       </div>
       <div class="qr-instructions">
@@ -34,20 +37,38 @@
         </div>
         <p>Quét mã ➔ Nhập tên ➔ Chọn chỗ ngồi</p>
         <span id="qrLinkText" class="qr-link-badge">Đang lấy đường dẫn...</span>
+        
+        <!-- Nhóm nút nhận câu hỏi, trộn đề và soạn thảo câu hỏi ngay tại chỗ quét QR -->
         <div class="qr-action-btns">
-          <span class="qr-click-prompt">🔍 Phóng to QR</span>
-          <button type="button" id="btnOpenQuestionManager" class="btn-qr-edit-q" title="Tạo câu hỏi mới hoặc thay đổi câu hỏi, đáp án trực tiếp">
-            ✍️ Tạo & Sửa Câu Hỏi
+          <button type="button" id="btnQrImportFile" class="btn-qr-pill btn-qr-import" title="Nhận câu hỏi từ file Excel (.xlsx) hoặc Word (.docx)">
+            📥 Nhận File
+          </button>
+          <button type="button" id="btnQrShuffle" class="btn-qr-pill btn-qr-shuffle" title="Trộn ngẫu nhiên câu hỏi & đáp án">
+            🔀 Trộn Đề
+          </button>
+          <button type="button" id="btnOpenQuestionManager" class="btn-qr-pill btn-qr-edit" title="Tạo câu hỏi mới hoặc thay đổi câu hỏi, đáp án trực tiếp">
+            ✍️ Soạn/Sửa
           </button>
         </div>
+        <div class="qr-sub-prompt">🔍 Nhấp ô QR để phóng to hoặc mở bảng quản lý</div>
       </div>
     </div>
 
-    <!-- Biểu tượng nổi tạo câu hỏi gắn liền cạnh mã QR -->
-    <button type="button" id="btnFloatingQuestionManager" class="btn-floating-qr-tool" title="Tạo câu hỏi mới hoặc thay đổi câu hỏi, đáp án trực tiếp">
-      <span class="btn-tool-icon">✍️</span>
-      <span class="btn-tool-label">Tạo Câu Hỏi</span>
-    </button>
+    <!-- Thanh công cụ nổi tiện ích gắn liền cạnh mã QR -->
+    <div class="qr-companion-toolbar">
+      <button type="button" id="btnFloatingImportFile" class="btn-companion-tool btn-companion-import" title="📥 Nhận câu hỏi từ file Excel (.xlsx) hoặc Word (.docx)">
+        <span class="btn-tool-icon">📥</span>
+        <span class="btn-tool-label">Nhận File</span>
+      </button>
+      <button type="button" id="btnFloatingShuffle" class="btn-companion-tool btn-companion-shuffle" title="🔀 Trộn ngẫu nhiên câu hỏi & đáp án">
+        <span class="btn-tool-icon">🔀</span>
+        <span class="btn-tool-label">Trộn Đề Thi</span>
+      </button>
+      <button type="button" id="btnFloatingQuestionManager" class="btn-companion-tool btn-companion-edit" title="✍️ Soạn thảo & Quản lý bộ câu hỏi">
+        <span class="btn-tool-icon">✍️</span>
+        <span class="btn-tool-label">Tạo Câu Hỏi</span>
+      </button>
+    </div>
 
     <!-- 2. ĐẾM CƯ SĨ & TIỆN ÍCH (GÓC TRÊN PHẢI) -->
     <div class="top-right-tools">
@@ -711,6 +732,31 @@
               <p class="qm-sub-note">Bạn cũng có thể dán đường dẫn tên miền riêng hoặc tunnel khác nếu cần.</p>
             </div>
 
+            <!-- MỤC QUẢN TRỊ BỘ CÂU HỎI NGAY TẠI BẢNG QR -->
+            <div class="qm-section qm-questions-section">
+              <h3>📚 NHẬN CÂU HỎI & TRỘN ĐỀ THI (.XLSX / .DOCX)</h3>
+              <p class="qm-desc">
+                Nhập file câu hỏi Excel (.xlsx) hoặc Word (.docx) để hệ thống tự động nhận dạng cấu trúc câu hỏi, sau đó bấm nút áp dụng thay đổi bộ câu hỏi hiện tại để đồng bộ tức thì sang toàn bộ máy người chơi.
+              </p>
+              
+              <div class="qm-questions-btn-grid">
+                <button type="button" id="btnModalImportFile" class="btn-qm-action btn-qm-import" title="Tải lên file Excel (.xlsx) hoặc Word (.docx)">
+                  📥 Nhận File Câu Hỏi (.xlsx / .docx)
+                </button>
+                <button type="button" id="btnModalShuffle" class="btn-qm-action btn-qm-shuffle" title="Trộn câu hỏi và đảo ngẫu nhiên đáp án">
+                  🔀 Trộn Đề Thi & Đáp Án
+                </button>
+                <button type="button" id="btnModalOpenQuestionManager" class="btn-qm-action btn-qm-edit" title="Mở bảng soạn thảo & chỉnh sửa chi tiết">
+                  ✍️ Soạn & Sửa Câu Hỏi
+                </button>
+              </div>
+
+              <div id="qmDropZone" class="qm-drop-zone">
+                <span class="drop-icon">📁</span>
+                <span class="drop-text">Kéo thả file <strong>.xlsx</strong> hoặc <strong>.docx</strong> vào đây để nạp câu hỏi tức thì</span>
+              </div>
+            </div>
+
             <div class="qm-section">
               <h3>ℹ️ HƯỚNG DẪN DÀNH CHO BAN TỔ CHỨC</h3>
               <ul class="qm-guide-list">
@@ -743,8 +789,10 @@
             <div class="qmm-list-toolbar">
               <span class="qmm-count-tag">Danh Sách (<strong id="qListTotal">12</strong> Câu)</span>
               <div class="qmm-list-btn-row">
-                <button type="button" id="btnAddNewQuestion" class="btn-qmm-mini btn-add-q">➕ Thêm Câu Mới</button>
-                <button type="button" id="btnResetDefaultQuestions" class="btn-qmm-mini btn-reset-q">🔄 Khôi Phục Gốc</button>
+                <button type="button" id="btnManagerImportFile" class="btn-qmm-mini btn-import-q" title="Nhận câu hỏi từ file Excel (.xlsx) hoặc Word (.docx)">📥 Nhận File</button>
+                <button type="button" id="btnManagerShuffle" class="btn-qmm-mini btn-shuffle-q" title="Trộn câu hỏi và đảo ngẫu nhiên các đáp án">🔀 Trộn Đề</button>
+                <button type="button" id="btnAddNewQuestion" class="btn-qmm-mini btn-add-q">➕ Thêm Câu</button>
+                <button type="button" id="btnResetDefaultQuestions" class="btn-qmm-mini btn-reset-q">🔄 Khôi Phục</button>
               </div>
             </div>
             <div id="questionListItems" class="qmm-items-scroll">
@@ -834,6 +882,121 @@
               </div>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 5: XEM TRƯỚC VÀ NÚT ÁP DỤNG THAY ĐỔI BỘ CÂU HỎI (.XLSX / .DOCX)
+         ===================================================================== -->
+    <div id="modalImportPreview" class="modal-backdrop" style="display: none;">
+      <div class="modal-card import-preview-modal">
+        <div class="qmm-header">
+          <div class="qmm-title-group">
+            <h2>📥 XÁC NHẬN BỘ CÂU HỎI ĐƯỢC NHẬN DẠNG TỪ FILE</h2>
+            <p class="qmm-subtitle">Hệ thống đã nhận dạng thành công các câu hỏi từ file của bạn. Kiểm tra kỹ trước khi bấm nút áp dụng thay đổi.</p>
+          </div>
+          <button type="button" id="btnCloseImportPreview" class="modal-close" title="Đóng bảng">✕</button>
+        </div>
+
+        <div class="import-preview-body">
+          <!-- Thanh tóm tắt kết quả nhận dạng file -->
+          <div class="import-summary-bar">
+            <div class="import-meta-item">
+              <span class="meta-icon">📁</span>
+              <span class="meta-label">Tên File:</span>
+              <strong id="importFileName" class="meta-val highlight">—</strong>
+            </div>
+            <div class="import-meta-item">
+              <span class="meta-icon">🏷️</span>
+              <span class="meta-label">Định Dạng:</span>
+              <strong id="importFileType" class="file-type-pill">—</strong>
+            </div>
+            <div class="import-meta-item">
+              <span class="meta-icon">📊</span>
+              <span class="meta-label">Số Câu Nhận Dạng:</span>
+              <strong id="importQuestionCount" class="count-pill">0 Câu</strong>
+            </div>
+          </div>
+
+          <!-- Lựa chọn chế độ thay đổi câu hỏi hiện tại -->
+          <div class="import-mode-box">
+            <span class="import-mode-title">Chế độ cập nhật câu hỏi:</span>
+            <div class="import-mode-radios">
+              <label class="import-mode-opt" title="Xóa bỏ bộ câu hỏi cũ và áp dụng toàn bộ câu hỏi mới từ file này">
+                <input type="radio" name="importApplyMode" value="replace" checked>
+                <span class="radio-custom"></span>
+                <span class="opt-text"><strong>🚀 Thay thế toàn bộ</strong> câu hỏi hiện tại (Khuyến nghị chuẩn)</span>
+              </label>
+              <label class="import-mode-opt" title="Giữ nguyên các câu hỏi hiện tại và thêm các câu mới này vào cuối">
+                <input type="radio" name="importApplyMode" value="append">
+                <span class="radio-custom"></span>
+                <span class="opt-text"><strong>➕ Nối tiếp thêm</strong> vào sau các câu hỏi hiện tại</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Danh sách câu hỏi xem trước -->
+          <div class="import-preview-scroll-wrap">
+            <div id="importPreviewList" class="import-preview-list">
+              <!-- Render danh sách câu hỏi bởi host.js -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Chân trang với NÚT ÁP DỤNG THAY ĐỔI CÂU HỎI HIỆN TẠI NỔI BẬT -->
+        <div class="import-preview-footer">
+          <div class="footer-note">
+            💡 Sau khi nhấn áp dụng, toàn bộ cư sĩ trên máy người chơi sẽ lập tức nhận bộ câu hỏi mới trong thời gian thực.
+          </div>
+          <div class="footer-actions">
+            <button type="button" id="btnCancelImport" class="btn-qmm-cancel">Hủy Bỏ</button>
+            <button type="button" id="btnApplyImportedQuestions" class="btn-apply-imported-quiz">
+              🚀 ÁP DỤNG THAY ĐỔI BỘ CÂU HỎI HIỆN TẠI
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 6: HỘP THOẠI TRỘN ĐỀ THI & ĐẢO ĐÁP ÁN (SHUFFLE MODAL)
+         ===================================================================== -->
+    <div id="modalShuffleConfirm" class="modal-backdrop" style="display: none;">
+      <div class="modal-card shuffle-modal-card">
+        <div class="qmm-header">
+          <div class="qmm-title-group">
+            <h2>🔀 TRỘN ĐỀ THI & ĐẢO NGẪU NHIÊN ĐÁP ÁN</h2>
+            <p class="qmm-subtitle">Tạo tính công bằng và mới mẻ cho buổi khảo nghiệm giáo lý.</p>
+          </div>
+          <button type="button" id="btnCloseShuffleModal" class="modal-close" title="Đóng">✕</button>
+        </div>
+
+        <div class="shuffle-modal-body">
+          <p class="shuffle-desc">Lựa chọn các hình thức xáo trộn ngẫu nhiên:</p>
+          <div class="shuffle-checkboxes">
+            <label class="shuffle-check-item">
+              <input type="checkbox" id="chkShuffleQuestions" checked>
+              <span class="check-box-custom"></span>
+              <span class="check-text">
+                <strong>Đảo lộn ngẫu nhiên thứ tự các câu hỏi</strong> (Câu 1 đến Câu N được xáo trộn thứ tự)
+              </span>
+            </label>
+            <label class="shuffle-check-item">
+              <input type="checkbox" id="chkShuffleOptions" checked>
+              <span class="check-box-custom"></span>
+              <span class="check-text">
+                <strong>Đảo ngẫu nhiên vị trí 4 lựa chọn A, B, C, D</strong> (Vẫn giữ đúng đáp án chính xác)
+              </span>
+            </label>
+          </div>
+        </div>
+
+        <div class="shuffle-modal-footer">
+          <button type="button" id="btnCancelShuffle" class="btn-qmm-cancel">Hủy Bỏ</button>
+          <button type="button" id="btnConfirmShuffle" class="btn-confirm-shuffle">
+            🔀 TIẾN HÀNH TRỘN ĐỀ & ĐỒNG BỘ NGƯỜI CHƠI
+          </button>
         </div>
       </div>
     </div>

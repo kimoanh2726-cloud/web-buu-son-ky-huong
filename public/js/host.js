@@ -133,6 +133,39 @@ const inputOpt2 = document.getElementById('inputOpt-2');
 const inputOpt3 = document.getElementById('inputOpt-3');
 const inputLoiGiai = document.getElementById('inputLoiGiai');
 
+// Question Import & Shuffle DOM
+const inputQuestionsFile = document.getElementById('inputQuestionsFile');
+const btnQrImportFile = document.getElementById('btnQrImportFile');
+const btnQrShuffle = document.getElementById('btnQrShuffle');
+const btnFloatingImportFile = document.getElementById('btnFloatingImportFile');
+const btnFloatingShuffle = document.getElementById('btnFloatingShuffle');
+
+const btnModalImportFile = document.getElementById('btnModalImportFile');
+const btnModalShuffle = document.getElementById('btnModalShuffle');
+const btnModalOpenQuestionManager = document.getElementById('btnModalOpenQuestionManager');
+const qmDropZone = document.getElementById('qmDropZone');
+
+const btnManagerImportFile = document.getElementById('btnManagerImportFile');
+const btnManagerShuffle = document.getElementById('btnManagerShuffle');
+
+// Import Preview Modal DOM
+const modalImportPreview = document.getElementById('modalImportPreview');
+const btnCloseImportPreview = document.getElementById('btnCloseImportPreview');
+const btnCancelImport = document.getElementById('btnCancelImport');
+const btnApplyImportedQuestions = document.getElementById('btnApplyImportedQuestions');
+const importFileName = document.getElementById('importFileName');
+const importFileType = document.getElementById('importFileType');
+const importQuestionCount = document.getElementById('importQuestionCount');
+const importPreviewList = document.getElementById('importPreviewList');
+
+// Shuffle Modal DOM
+const modalShuffleConfirm = document.getElementById('modalShuffleConfirm');
+const btnCloseShuffleModal = document.getElementById('btnCloseShuffleModal');
+const btnCancelShuffle = document.getElementById('btnCancelShuffle');
+const btnConfirmShuffle = document.getElementById('btnConfirmShuffle');
+const chkShuffleQuestions = document.getElementById('chkShuffleQuestions');
+const chkShuffleOptions = document.getElementById('chkShuffleOptions');
+
 // Local Data
 const seatsMap = new Map();
 const playersMap = new Map();
@@ -142,6 +175,7 @@ let isPublicTunnel = false;
 let questionsData = [];
 let editingQuestionIndex = 0;
 let currentActiveQuestionIdx = -1;
+let pendingImportedQuestions = [];
 
 // Host Token xác thực quyền quản trị
 const urlParams = new URLSearchParams(window.location.search);
@@ -1530,6 +1564,258 @@ socket.on('host:save_question_success', (data) => {
 socket.on('host:question_error', (data) => {
   showToast('⚠️ ' + (data.message || 'Lỗi thao tác câu hỏi'));
 });
+
+// ============================================================================
+// LOGIC NHẬN CÂU HỎI TỪ FILE (.XLSX / .DOCX) & TRỘN ĐỀ THI (SHUFFLE)
+// ============================================================================
+
+function openImportPreviewModal() {
+  if (modalImportPreview) modalImportPreview.style.display = 'flex';
+}
+
+function closeImportPreviewModal() {
+  if (modalImportPreview) modalImportPreview.style.display = 'none';
+}
+
+function openShuffleModal() {
+  if (modalShuffleConfirm) modalShuffleConfirm.style.display = 'flex';
+}
+
+function closeShuffleModal() {
+  if (modalShuffleConfirm) modalShuffleConfirm.style.display = 'none';
+}
+
+function triggerFileInput(e) {
+  if (e) e.stopPropagation();
+  if (inputQuestionsFile) {
+    inputQuestionsFile.value = '';
+    inputQuestionsFile.click();
+  }
+}
+
+function handleQuestionFile(file) {
+  if (!file) return;
+  const filename = file.name;
+  const ext = filename.substring(filename.lastIndexOf('.')).toLowerCase();
+  if (ext !== '.xlsx' && ext !== '.xls' && ext !== '.docx') {
+    alert(`Định dạng "${ext}" không được hỗ trợ!\nVui lòng chọn file Excel (.xlsx) hoặc Word (.docx).`);
+    return;
+  }
+
+  showToast(`⏳ Đang nhận dạng cấu trúc câu hỏi từ ${filename}...`);
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const base64 = e.target.result;
+    socket.emit('host:parse_file', {
+      filename,
+      base64
+    });
+  };
+  reader.onerror = function() {
+    alert('Không thể đọc file đã chọn!');
+  };
+  reader.readAsDataURL(file);
+}
+
+// Lắng nghe chọn file từ input
+if (inputQuestionsFile) {
+  inputQuestionsFile.addEventListener('change', (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      handleQuestionFile(e.target.files[0]);
+    }
+  });
+}
+
+// 1. Gắn sự kiện các nút "Nhận File" ở mọi vị trí
+if (btnQrImportFile) {
+  btnQrImportFile.addEventListener('click', triggerFileInput);
+}
+if (btnFloatingImportFile) {
+  btnFloatingImportFile.addEventListener('click', triggerFileInput);
+}
+if (btnModalImportFile) {
+  btnModalImportFile.addEventListener('click', triggerFileInput);
+}
+if (btnManagerImportFile) {
+  btnManagerImportFile.addEventListener('click', triggerFileInput);
+}
+
+// 2. Gắn sự kiện các nút "Trộn Đề" ở mọi vị trí
+function triggerShuffleClick(e) {
+  if (e) e.stopPropagation();
+  openShuffleModal();
+}
+
+if (btnQrShuffle) {
+  btnQrShuffle.addEventListener('click', triggerShuffleClick);
+}
+if (btnFloatingShuffle) {
+  btnFloatingShuffle.addEventListener('click', triggerShuffleClick);
+}
+if (btnModalShuffle) {
+  btnModalShuffle.addEventListener('click', triggerShuffleClick);
+}
+if (btnManagerShuffle) {
+  btnManagerShuffle.addEventListener('click', triggerShuffleClick);
+}
+
+if (btnModalOpenQuestionManager) {
+  btnModalOpenQuestionManager.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeQrManagerModal();
+    openQuestionManagerModal();
+  });
+}
+
+// 3. Kéo thả file câu hỏi trực tiếp (Drag & Drop)
+if (qmDropZone) {
+  qmDropZone.addEventListener('click', triggerFileInput);
+  qmDropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    qmDropZone.classList.add('dragover');
+  });
+  qmDropZone.addEventListener('dragleave', () => {
+    qmDropZone.classList.remove('dragover');
+  });
+  qmDropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    qmDropZone.classList.remove('dragover');
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleQuestionFile(e.dataTransfer.files[0]);
+    }
+  });
+}
+
+// Hỗ trợ kéo thả file câu hỏi vào bất kỳ đâu trên màn hình máy chủ
+window.addEventListener('dragover', (e) => e.preventDefault());
+window.addEventListener('drop', (e) => {
+  if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+    const f = e.dataTransfer.files[0];
+    const ext = f.name.substring(f.name.lastIndexOf('.')).toLowerCase();
+    if (ext === '.xlsx' || ext === '.xls' || ext === '.docx') {
+      e.preventDefault();
+      handleQuestionFile(f);
+    }
+  }
+});
+
+// 4. Render danh sách câu hỏi xem trước trong Import Preview Modal
+function renderImportPreviewCards(list) {
+  if (!importPreviewList) return;
+  importPreviewList.innerHTML = '';
+
+  list.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'import-q-item';
+    const correctIdx = typeof q.dap_an_dung === 'number' ? q.dap_an_dung : 0;
+    const opts = Array.isArray(q.cac_lua_chon) ? q.cac_lua_chon : ['', '', '', ''];
+    const letter = ['A', 'B', 'C', 'D'];
+
+    let optsHtml = '';
+    opts.forEach((optText, oIdx) => {
+      const isCorrect = (oIdx === correctIdx);
+      optsHtml += `
+        <div class="import-q-opt ${isCorrect ? 'is-correct' : ''}">
+          <span class="hq-opt-letter" style="${isCorrect ? 'background: #166534; color: #fff; border-color: #4ade80;' : ''}">${letter[oIdx]}</span>
+          <span>${escapeHtml(optText || '')}</span>
+        </div>
+      `;
+    });
+
+    card.innerHTML = `
+      <div class="import-q-head">
+        <span class="import-q-num">#${idx + 1 < 10 ? '0' + (idx + 1) : idx + 1}. ${escapeHtml(q.que_so || `Quẻ #${idx + 1}`)}</span>
+        <span class="import-q-topic">${escapeHtml(q.chu_de || 'Giáo Lý Bửu Sơn Kỳ Hương')}</span>
+      </div>
+      <div class="import-q-body">${escapeHtml(q.cau_hoi || '')}</div>
+      <div class="import-q-opts">${optsHtml}</div>
+      ${q.loi_giai ? `<div class="import-q-expl">💡 Giải nghĩa: ${escapeHtml(q.loi_giai)}</div>` : ''}
+    `;
+    importPreviewList.appendChild(card);
+  });
+}
+
+// 5. Khi Server trả về kết quả phân tích file thành công
+socket.on('host:file_parsed', (data) => {
+  pendingImportedQuestions = data.questions || [];
+  if (importFileName) importFileName.textContent = data.filename || 'Tập tin câu hỏi';
+  if (importFileType) importFileType.textContent = data.fileType || 'Excel/Word';
+  if (importQuestionCount) importQuestionCount.textContent = `${data.count} Câu Hỏi`;
+
+  renderImportPreviewCards(pendingImportedQuestions);
+  openImportPreviewModal();
+  showToast(`✅ Đã nhận dạng thành công ${data.count} câu hỏi từ ${data.filename}!`);
+});
+
+socket.on('host:file_parse_error', (data) => {
+  alert('⚠️ Lỗi nhận dạng file câu hỏi:\n' + (data.message || 'Không thể đọc cấu trúc câu hỏi.'));
+  showToast('⚠️ Lỗi nhận dạng file câu hỏi');
+});
+
+// 6. Xử lý Nút Áp Dụng Thay Đổi Câu Hỏi Hiện Tại
+if (btnApplyImportedQuestions) {
+  btnApplyImportedQuestions.addEventListener('click', () => {
+    if (!pendingImportedQuestions || pendingImportedQuestions.length === 0) {
+      alert('Không có câu hỏi nào để áp dụng!');
+      return;
+    }
+
+    const selectedRadio = document.querySelector('input[name="importApplyMode"]:checked');
+    const mode = selectedRadio ? selectedRadio.value : 'replace';
+
+    showToast('🚀 Đang thay đổi bộ câu hỏi hiện tại và đồng bộ sang máy người chơi...');
+
+    socket.emit('host:apply_imported_questions', {
+      questions: pendingImportedQuestions,
+      mode
+    });
+
+    closeImportPreviewModal();
+    closeQrManagerModal();
+  });
+}
+
+socket.on('host:apply_imported_success', (data) => {
+  showToast(data.message || `✅ Đã áp dụng thành công ${data.count} câu hỏi mới!`);
+  if (data.questions) {
+    questionsData = data.questions;
+    renderQuestionList();
+    selectQuestionToEdit(0);
+  }
+});
+
+// 7. Xử lý Nút Xác Nhận Trộn Đề Thi
+if (btnConfirmShuffle) {
+  btnConfirmShuffle.addEventListener('click', () => {
+    const shuffleQuestions = chkShuffleQuestions ? chkShuffleQuestions.checked : true;
+    const shuffleOptions = chkShuffleOptions ? chkShuffleOptions.checked : true;
+
+    showToast('🔀 Đang tiến hành trộn đề thi và đồng bộ sang người chơi...');
+
+    socket.emit('host:shuffle_questions', {
+      shuffleQuestions,
+      shuffleOptions
+    });
+
+    closeShuffleModal();
+  });
+}
+
+socket.on('host:shuffle_success', (data) => {
+  showToast(data.message || '🔀 Đã trộn đề thi và đảo đáp án thành công!');
+  if (data.questions) {
+    questionsData = data.questions;
+    renderQuestionList();
+    selectQuestionToEdit(0);
+  }
+});
+
+// Đóng các Modal
+if (btnCloseImportPreview) btnCloseImportPreview.addEventListener('click', closeImportPreviewModal);
+if (btnCancelImport) btnCancelImport.addEventListener('click', closeImportPreviewModal);
+if (btnCloseShuffleModal) btnCloseShuffleModal.addEventListener('click', closeShuffleModal);
+if (btnCancelShuffle) btnCancelShuffle.addEventListener('click', closeShuffleModal);
 
 socket.on('quiz:questions_list_updated', (data) => {
   if (hostProgressDigits && data.totalQuestions) {

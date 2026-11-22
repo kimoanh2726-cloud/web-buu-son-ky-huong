@@ -9,6 +9,7 @@ const fs = require('fs');
 const { spawn } = require('child_process');
 
 const DEFAULT_QUESTIONS = require('./public/js/questions');
+const { parseXlsxBuffer, parseDocxBuffer, shuffleQuestionsList } = require('./question-parser');
 const QUESTIONS_FILE = path.join(__dirname, 'data', 'questions.json');
 
 function loadQuestions() {
@@ -91,8 +92,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Giới hạn kích thước payload JSON tối đa 64kb để phòng chống tấn công tràn bộ nhớ (DoS)
-app.use(express.json({ limit: '64kb' }));
+// Cho phép upload file câu hỏi Excel (.xlsx) / Word (.docx) dung lượng lên đến 25MB
+app.use(express.json({ limit: '25mb' }));
+app.use(express.urlencoded({ extended: true, limit: '25mb' }));
 
 function isLocalRequest(req) {
   const host = (req.headers.host || '').toLowerCase();
@@ -631,6 +633,137 @@ app.get('/api/tunnel/status', (req, res) => {
   });
 });
 
+// ============================================================================
+// API NHẬN DẠNG & QUẢN LÝ BỘ CÂU HỎI TỪ FILE (.XLSX / .DOCX)
+// ============================================================================
+app.post('/api/questions/parse-file', requireHostAuth, (req, res) => {
+  try {
+    const { fileBase64, filename } = req.body;
+    if (!fileBase64 || !filename) {
+      return res.status(400).json({ error: 'Thiếu dữ liệu file tải lên hoặc tên file.' });
+    }
+
+    const ext = path.extname(filename).toLowerCase();
+    const cleanBase64 = fileBase64.replace(/^data:[^;]+;base64,/, '');
+    const buffer = Buffer.from(cleanBase64, 'base64');
+
+    let parsedQuestions = [];
+    let fileTypeDetected = '';
+
+    if (ext === '.xlsx' || ext === '.xls') {
+      fileTypeDetected = 'Excel (' + ext + ')';
+      parsedQuestions = parseXlsxBuffer(buffer);
+    } else if (ext === '.docx') {
+      fileTypeDetected = 'Word (.docx)';
+      parsedQuestions = parseDocxBuffer(buffer);
+    } else {
+      return res.status(400).json({
+        error: `Định dạng ${ext} không được hỗ trợ. Hệ thống hỗ trợ 2 loại file câu hỏi: Excel (.xlsx) và Word (.docx).`
+      });
+    }
+
+    res.json({
+      success: true,
+      filename,
+      fileType: fileTypeDetected,
+      count: parsedQuestions.length,
+      questions: parsedQuestions
+    });
+  } catch (err) {
+    console.error('[Questions API] Lỗi nhận dạng file câu hỏi:', err.message);
+    res.status(400).json({ error: err.message || 'Lỗi xử lý file câu hỏi.' });
+  }
+});
+
+app.post('/api/questions/apply', requireHostAuth, (req, res) => {
+  try {
+    const { questions, mode } = req.body;
+    if (!Array.isArray(questions) || questions.length === 0) {
+      return res.status(400).json({ error: 'Danh sách câu hỏi trống hoặc không hợp lệ.' });
+    }
+
+    if (mode === 'append') {
+      const startId = QUESTIONS.length;
+      questions.forEach((q, i) => {
+        q.id = startId + i + 1;
+        q.que_so = q.que_so || `Quẻ #${q.id}`;
+        QUESTIONS.push(q);
+      });
+    } else {
+      // Mặc định thay thế toàn bộ
+      questions.forEach((q, i) => {
+        q.id = i + 1;
+        q.que_so = q.que_so || `Quẻ #${i + 1}`;
+      });
+      QUESTIONS = questions;
+    }
+
+    quizState.totalQuestions = QUESTIONS.length;
+    saveQuestionsToDisk(QUESTIONS);
+
+    // Phát sóng đồng bộ thời gian thực sang toàn bộ máy người chơi & máy chủ
+    io.emit('quiz:questions_list_updated', {
+      totalQuestions: QUESTIONS.length,
+      message: `Đã áp dụng ${QUESTIONS.length} câu hỏi mới!`
+    });
+
+    if (quizState.currentIndex >= 0 && quizState.currentIndex < QUESTIONS.length) {
+      const q = QUESTIONS[quizState.currentIndex];
+      io.emit('quiz:current_question_updated', {
+        questionIndex: quizState.currentIndex,
+        questionNumber: quizState.currentIndex + 1,
+        totalQuestions: quizState.totalQuestions,
+        queSo: q.que_so,
+        chuDe: q.chu_de,
+        cauHoi: q.cau_hoi,
+        cacLuaChon: q.cac_lua_chon,
+        timeLimit: quizState.timeLimit,
+        remainingTime: quizState.remainingTime,
+        correctAnswer: quizState.isRevealed ? q.dap_an_dung : null,
+        loiGiai: quizState.isRevealed ? q.loi_giai : null
+      });
+    }
+
+    res.json({ success: true, count: QUESTIONS.length, questions: QUESTIONS });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.post('/api/questions/shuffle', requireHostAuth, (req, res) => {
+  try {
+    const { shuffleQuestions = true, shuffleOptions = true } = req.body;
+    QUESTIONS = shuffleQuestionsList(QUESTIONS, { shuffleQuestions, shuffleOptions });
+    saveQuestionsToDisk(QUESTIONS);
+
+    io.emit('quiz:questions_list_updated', {
+      totalQuestions: QUESTIONS.length,
+      message: 'Bộ câu hỏi đã được trộn ngẫu nhiên!'
+    });
+
+    if (quizState.currentIndex >= 0 && quizState.currentIndex < QUESTIONS.length) {
+      const q = QUESTIONS[quizState.currentIndex];
+      io.emit('quiz:current_question_updated', {
+        questionIndex: quizState.currentIndex,
+        questionNumber: quizState.currentIndex + 1,
+        totalQuestions: quizState.totalQuestions,
+        queSo: q.que_so,
+        chuDe: q.chu_de,
+        cauHoi: q.cau_hoi,
+        cacLuaChon: q.cac_lua_chon,
+        timeLimit: quizState.timeLimit,
+        remainingTime: quizState.remainingTime,
+        correctAnswer: quizState.isRevealed ? q.dap_an_dung : null,
+        loiGiai: quizState.isRevealed ? q.loi_giai : null
+      });
+    }
+
+    res.json({ success: true, count: QUESTIONS.length, questions: QUESTIONS });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Điều hướng trang chủ: Nếu là Host trực tiếp hoặc có key thì mở Host; Nếu người chơi ngoài Internet thì tự động vào player.html
 app.get('/', (req, res) => {
   const isLocal = isLocalRequest(req);
@@ -933,6 +1066,153 @@ io.on('connection', (socket) => {
         correctAnswer: quizState.isRevealed ? curQ.dap_an_dung : null,
         loiGiai: quizState.isRevealed ? curQ.loi_giai : null
       });
+    }
+  });
+
+  // 6i. Host yêu cầu phân tích & nhận dạng file câu hỏi (.xlsx / .docx)
+  socket.on('host:parse_file', (data) => {
+    if (!socket.isHost) return;
+    try {
+      if (!data || !data.base64 || !data.filename) {
+        socket.emit('host:file_parse_error', { message: 'Dữ liệu file không đầy đủ.' });
+        return;
+      }
+      const ext = path.extname(data.filename).toLowerCase();
+      const cleanBase64 = data.base64.replace(/^data:[^;]+;base64,/, '');
+      const buffer = Buffer.from(cleanBase64, 'base64');
+
+      let parsed = [];
+      let fileType = '';
+
+      if (ext === '.xlsx' || ext === '.xls') {
+        fileType = 'Excel (' + ext + ')';
+        parsed = parseXlsxBuffer(buffer);
+      } else if (ext === '.docx') {
+        fileType = 'Word (.docx)';
+        parsed = parseDocxBuffer(buffer);
+      } else {
+        socket.emit('host:file_parse_error', {
+          message: `Định dạng ${ext} không được hỗ trợ. Vui lòng tải lên file Excel (.xlsx) hoặc Word (.docx).`
+        });
+        return;
+      }
+
+      socket.emit('host:file_parsed', {
+        filename: data.filename,
+        fileType,
+        count: parsed.length,
+        questions: parsed
+      });
+    } catch (err) {
+      console.error('[Socket host:parse_file error]:', err.message);
+      socket.emit('host:file_parse_error', { message: err.message || 'Không thể xử lý file.' });
+    }
+  });
+
+  // 6j. Host bấm nút áp dụng thay đổi bộ câu hỏi hiện tại (Replace hoặc Append)
+  socket.on('host:apply_imported_questions', (data) => {
+    if (!socket.isHost) return;
+    try {
+      if (!data || !Array.isArray(data.questions) || data.questions.length === 0) {
+        socket.emit('host:question_error', { message: 'Danh sách câu hỏi trống hoặc không hợp lệ.' });
+        return;
+      }
+
+      const mode = data.mode || 'replace';
+      if (mode === 'append') {
+        const startId = QUESTIONS.length;
+        data.questions.forEach((q, i) => {
+          q.id = startId + i + 1;
+          q.que_so = q.que_so || `Quẻ #${q.id}`;
+          QUESTIONS.push(q);
+        });
+      } else {
+        data.questions.forEach((q, i) => {
+          q.id = i + 1;
+          q.que_so = q.que_so || `Quẻ #${i + 1}`;
+        });
+        QUESTIONS = data.questions;
+      }
+
+      quizState.totalQuestions = QUESTIONS.length;
+      saveQuestionsToDisk(QUESTIONS);
+
+      socket.emit('host:apply_imported_success', {
+        message: `✅ Đã áp dụng thành công ${QUESTIONS.length} câu hỏi mới!`,
+        count: QUESTIONS.length,
+        questions: QUESTIONS
+      });
+
+      // Phát sóng cập nhật đồng bộ tức thì sang toàn bộ máy người chơi
+      io.emit('quiz:questions_list_updated', {
+        totalQuestions: QUESTIONS.length,
+        message: `Bộ đề thi đã cập nhật: ${QUESTIONS.length} câu khảo nghiệm.`
+      });
+
+      if (quizState.currentIndex >= 0 && quizState.currentIndex < QUESTIONS.length) {
+        const curQ = QUESTIONS[quizState.currentIndex];
+        io.emit('quiz:current_question_updated', {
+          questionIndex: quizState.currentIndex,
+          questionNumber: quizState.currentIndex + 1,
+          totalQuestions: quizState.totalQuestions,
+          queSo: curQ.que_so,
+          chuDe: curQ.chu_de,
+          cauHoi: curQ.cau_hoi,
+          cacLuaChon: curQ.cac_lua_chon,
+          timeLimit: quizState.timeLimit,
+          remainingTime: quizState.remainingTime,
+          correctAnswer: quizState.isRevealed ? curQ.dap_an_dung : null,
+          loiGiai: quizState.isRevealed ? curQ.loi_giai : null
+        });
+      }
+    } catch (err) {
+      console.error('[Socket host:apply_imported_questions error]:', err.message);
+      socket.emit('host:question_error', { message: err.message });
+    }
+  });
+
+  // 6k. Host bấm nút trộn đề thi (Xáo trộn ngẫu nhiên câu hỏi & đảo thứ tự đáp án)
+  socket.on('host:shuffle_questions', (data) => {
+    if (!socket.isHost) return;
+    try {
+      const opts = {
+        shuffleQuestions: data && data.shuffleQuestions !== undefined ? !!data.shuffleQuestions : true,
+        shuffleOptions: data && data.shuffleOptions !== undefined ? !!data.shuffleOptions : true
+      };
+
+      QUESTIONS = shuffleQuestionsList(QUESTIONS, opts);
+      saveQuestionsToDisk(QUESTIONS);
+
+      socket.emit('host:shuffle_success', {
+        message: '🔀 Đã trộn ngẫu nhiên toàn bộ câu hỏi và đáp án thành công!',
+        count: QUESTIONS.length,
+        questions: QUESTIONS
+      });
+
+      io.emit('quiz:questions_list_updated', {
+        totalQuestions: QUESTIONS.length,
+        message: 'Bộ câu hỏi đã được trộn ngẫu nhiên.'
+      });
+
+      if (quizState.currentIndex >= 0 && quizState.currentIndex < QUESTIONS.length) {
+        const curQ = QUESTIONS[quizState.currentIndex];
+        io.emit('quiz:current_question_updated', {
+          questionIndex: quizState.currentIndex,
+          questionNumber: quizState.currentIndex + 1,
+          totalQuestions: quizState.totalQuestions,
+          queSo: curQ.que_so,
+          chuDe: curQ.chu_de,
+          cauHoi: curQ.cau_hoi,
+          cacLuaChon: curQ.cac_lua_chon,
+          timeLimit: quizState.timeLimit,
+          remainingTime: quizState.remainingTime,
+          correctAnswer: quizState.isRevealed ? curQ.dap_an_dung : null,
+          loiGiai: quizState.isRevealed ? curQ.loi_giai : null
+        });
+      }
+    } catch (err) {
+      console.error('[Socket host:shuffle_questions error]:', err.message);
+      socket.emit('host:question_error', { message: err.message });
     }
   });
 
