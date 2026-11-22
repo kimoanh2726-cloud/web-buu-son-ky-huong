@@ -108,12 +108,40 @@ const modalLeaderboard = document.getElementById('modalLeaderboard');
 const leaderboardTableBody = document.getElementById('leaderboardTableBody');
 const btnPlayAgain = document.getElementById('btnPlayAgain');
 
+// Question Manager Modal DOM
+const btnOpenQuestionManager = document.getElementById('btnOpenQuestionManager');
+const btnFloatingQuestionManager = document.getElementById('btnFloatingQuestionManager');
+const btnTopQuestionManager = document.getElementById('btnTopQuestionManager');
+const modalQuestionManager = document.getElementById('modalQuestionManager');
+const btnCloseQuestionManager = document.getElementById('btnCloseQuestionManager');
+const btnCancelQuestionEdit = document.getElementById('btnCancelQuestionEdit');
+const btnAddNewQuestion = document.getElementById('btnAddNewQuestion');
+const btnResetDefaultQuestions = document.getElementById('btnResetDefaultQuestions');
+const btnSaveQuestion = document.getElementById('btnSaveQuestion');
+const btnDeleteCurrentQuestion = document.getElementById('btnDeleteCurrentQuestion');
+const qListTotal = document.getElementById('qListTotal');
+const questionListItems = document.getElementById('questionListItems');
+const qmmEditingTitle = document.getElementById('qmmEditingTitle');
+const qmmActiveBadge = document.getElementById('qmmActiveBadge');
+
+const inputQueSo = document.getElementById('inputQueSo');
+const inputChuDe = document.getElementById('inputChuDe');
+const inputCauHoi = document.getElementById('inputCauHoi');
+const inputOpt0 = document.getElementById('inputOpt-0');
+const inputOpt1 = document.getElementById('inputOpt-1');
+const inputOpt2 = document.getElementById('inputOpt-2');
+const inputOpt3 = document.getElementById('inputOpt-3');
+const inputLoiGiai = document.getElementById('inputLoiGiai');
+
 // Local Data
 const seatsMap = new Map();
 const playersMap = new Map();
 let currentJoinUrl = '';
 let currentQrDataUrl = '';
 let isPublicTunnel = false;
+let questionsData = [];
+let editingQuestionIndex = 0;
+let currentActiveQuestionIdx = -1;
 
 // Host Token xác thực quyền quản trị
 const urlParams = new URLSearchParams(window.location.search);
@@ -291,6 +319,12 @@ socket.on('host:state', (data) => {
   playerCountVal.textContent = playersMap.size;
   if (seatedCountVal) {
     seatedCountVal.textContent = data.totalOccupied !== undefined ? data.totalOccupied : (data.seats || []).filter(s => !!s.occupant).length;
+  }
+
+  // Khởi tạo hoặc cập nhật danh sách câu hỏi
+  if (data.questions && Array.isArray(data.questions)) {
+    questionsData = data.questions;
+    renderQuestionList();
   }
 
   // Khôi phục trạng thái câu hỏi nếu đang diễn ra
@@ -597,6 +631,11 @@ socket.on('quiz:time_adjusted', (data) => {
 function renderHostQuestion(data) {
   if (!hostQuizCard) return;
   toggleQuizCard(true);
+
+  currentActiveQuestionIdx = (data.questionNumber !== undefined) ? data.questionNumber - 1 : -1;
+  if (qmmActiveBadge) {
+    qmmActiveBadge.style.display = (editingQuestionIndex === currentActiveQuestionIdx) ? 'inline-block' : 'none';
+  }
 
   if (hostProgressDigits) {
     hostProgressDigits.textContent = `${data.questionNumber} / ${data.totalQuestions}`;
@@ -1237,6 +1276,276 @@ function downloadA4Poster() {
 
 if (btnDownloadPosterFs) btnDownloadPosterFs.addEventListener('click', downloadA4Poster);
 if (btnDownloadPosterModal) btnDownloadPosterModal.addEventListener('click', downloadA4Poster);
+
+// ============================================================================
+// HỆ THỐNG SOẠN THẢO & QUẢN LÝ CÂU HỎI (QUESTION MANAGER & EDITOR)
+// ============================================================================
+function escapeHtml(str) {
+  if (!str) return '';
+  return str.toString()
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+function openQuestionManagerModal() {
+  if (modalQuestionManager) {
+    modalQuestionManager.style.display = 'flex';
+    if (questionsData.length === 0) {
+      socket.emit('host:get_questions');
+    } else {
+      renderQuestionList();
+      selectQuestionToEdit(editingQuestionIndex);
+    }
+  }
+}
+
+function closeQuestionManagerModal() {
+  if (modalQuestionManager) {
+    modalQuestionManager.style.display = 'none';
+  }
+}
+
+function getSelectedCorrectChoice() {
+  const selected = document.querySelector('input[name="qmmCorrectChoice"]:checked');
+  return selected ? parseInt(selected.value) : 0;
+}
+
+function setSelectedCorrectChoice(idx) {
+  const radio = document.querySelector(`input[name="qmmCorrectChoice"][value="${idx}"]`);
+  if (radio) radio.checked = true;
+  updateCorrectChoiceHighlight(idx);
+}
+
+function updateCorrectChoiceHighlight(idx) {
+  for (let i = 0; i < 4; i++) {
+    const row = document.getElementById(`qmmOptRow-${i}`);
+    const tag = document.getElementById(`qmmCorrectTag-${i}`);
+    if (row) {
+      if (i === idx) {
+        row.classList.add('correct');
+        if (tag) tag.style.display = 'inline-block';
+      } else {
+        row.classList.remove('correct');
+        if (tag) tag.style.display = 'none';
+      }
+    }
+  }
+}
+
+document.querySelectorAll('input[name="qmmCorrectChoice"]').forEach(r => {
+  r.addEventListener('change', () => {
+    updateCorrectChoiceHighlight(parseInt(r.value));
+  });
+});
+
+function renderQuestionList() {
+  if (!questionListItems) return;
+  questionListItems.innerHTML = '';
+  if (qListTotal) qListTotal.textContent = questionsData.length;
+
+  questionsData.forEach((q, idx) => {
+    const card = document.createElement('div');
+    card.className = 'qmm-item-card' + (idx === editingQuestionIndex ? ' active' : '');
+    card.id = `qmm-card-${idx}`;
+    card.onclick = () => selectQuestionToEdit(idx);
+
+    const letter = ['A', 'B', 'C', 'D'][q.dap_an_dung || 0] || 'A';
+    card.innerHTML = `
+      <div class="qmm-item-header">
+        <span class="qmm-item-badge">#${idx + 1 < 10 ? '0' + (idx + 1) : idx + 1}</span>
+        <span class="qmm-item-answer" title="Đáp án đúng: ${letter}">✓ Đáp án: ${letter}</span>
+      </div>
+      <div class="qmm-item-title">${escapeHtml(q.que_so || '')} • ${escapeHtml(q.chuDe || q.chu_de || '')}</div>
+      <div class="qmm-item-snippet">${escapeHtml(q.cau_hoi || '')}</div>
+    `;
+    questionListItems.appendChild(card);
+  });
+}
+
+function selectQuestionToEdit(index) {
+  if (index < 0 || index >= questionsData.length) {
+    if (questionsData.length > 0) index = 0;
+    else return;
+  }
+  editingQuestionIndex = index;
+
+  document.querySelectorAll('.qmm-item-card').forEach((c, i) => {
+    c.classList.toggle('active', i === index);
+  });
+
+  const q = questionsData[index];
+  if (!q) return;
+
+  if (qmmEditingTitle) {
+    qmmEditingTitle.textContent = `Chỉnh Sửa Câu Hỏi #${index + 1 < 10 ? '0' + (index + 1) : index + 1}`;
+  }
+  if (qmmActiveBadge) {
+    qmmActiveBadge.style.display = (index === currentActiveQuestionIdx) ? 'inline-block' : 'none';
+  }
+
+  if (inputQueSo) inputQueSo.value = q.que_so || '';
+  if (inputChuDe) inputChuDe.value = q.chu_de || q.chuDe || '';
+  if (inputCauHoi) inputCauHoi.value = q.cau_hoi || '';
+
+  const opts = q.cac_lua_chon || q.cacLuaChon || ['', '', '', ''];
+  if (inputOpt0) inputOpt0.value = opts[0] || '';
+  if (inputOpt1) inputOpt1.value = opts[1] || '';
+  if (inputOpt2) inputOpt2.value = opts[2] || '';
+  if (inputOpt3) inputOpt3.value = opts[3] || '';
+
+  setSelectedCorrectChoice(q.dap_an_dung !== undefined ? q.dap_an_dung : 0);
+  if (inputLoiGiai) inputLoiGiai.value = q.loi_giai || q.loiGiai || '';
+}
+
+function saveCurrentQuestionForm() {
+  const queSo = inputQueSo ? inputQueSo.value.trim() : '';
+  const chuDe = inputChuDe ? inputChuDe.value.trim() : '';
+  const cauHoi = inputCauHoi ? inputCauHoi.value.trim() : '';
+  const opt0 = inputOpt0 ? inputOpt0.value.trim() : '';
+  const opt1 = inputOpt1 ? inputOpt1.value.trim() : '';
+  const opt2 = inputOpt2 ? inputOpt2.value.trim() : '';
+  const opt3 = inputOpt3 ? inputOpt3.value.trim() : '';
+  const dapAnDung = getSelectedCorrectChoice();
+  const loiGiai = inputLoiGiai ? inputLoiGiai.value.trim() : '';
+
+  if (!cauHoi) {
+    alert('Vui lòng nhập nội dung câu hỏi!');
+    if (inputCauHoi) inputCauHoi.focus();
+    return;
+  }
+  if (!opt0 || !opt1) {
+    alert('Vui lòng nhập ít nhất lựa chọn A và B!');
+    return;
+  }
+
+  const updatedQ = {
+    id: (editingQuestionIndex >= 0 && questionsData[editingQuestionIndex]) ? questionsData[editingQuestionIndex].id : (editingQuestionIndex + 1),
+    que_so: queSo || `Quẻ #${editingQuestionIndex + 1}`,
+    chu_de: chuDe || 'Giáo Lý Bửu Sơn Kỳ Hương',
+    cau_hoi: cauHoi,
+    cac_lua_chon: [opt0, opt1, opt2, opt3],
+    dap_an_dung: dapAnDung,
+    loi_giai: loiGiai
+  };
+
+  socket.emit('host:save_question', {
+    index: editingQuestionIndex,
+    question: updatedQ
+  });
+}
+
+function addNewQuestion() {
+  const newIdx = questionsData.length;
+  const newQ = {
+    id: newIdx + 1,
+    que_so: `Quẻ #${newIdx + 1}`,
+    chu_de: 'Chủ Đề Khảo Nghiệm Mới',
+    cau_hoi: 'Nhập nội dung câu hỏi mới tại đây...',
+    cac_lua_chon: ['Lựa chọn A', 'Lựa chọn B', 'Lựa chọn C', 'Lựa chọn D'],
+    dap_an_dung: 0,
+    loi_giai: 'Lời giải nghĩa tâm linh của Đức Phật Thầy...'
+  };
+
+  socket.emit('host:save_question', {
+    index: -1,
+    question: newQ
+  });
+}
+
+function deleteCurrentQuestion() {
+  if (questionsData.length <= 1) {
+    alert('Không thể xóa! Cần duy trì tối thiểu 1 câu hỏi.');
+    return;
+  }
+  const q = questionsData[editingQuestionIndex];
+  if (confirm(`Bạn có chắc muốn xóa vĩnh viễn Câu #${editingQuestionIndex + 1}: "${q ? q.que_so : ''}" không?`)) {
+    socket.emit('host:delete_question', { index: editingQuestionIndex });
+  }
+}
+
+function resetDefaultQuestions() {
+  if (confirm('Bạn có chắc muốn KHÔI PHỤC BỘ 12 CÂU HỎI GỐC ban đầu của Đức Phật Thầy không? Toàn bộ câu hỏi tự tạo thêm sẽ được đặt lại.')) {
+    socket.emit('host:reset_questions');
+  }
+}
+
+// Event Listeners cho Question Manager
+if (btnOpenQuestionManager) {
+  btnOpenQuestionManager.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openQuestionManagerModal();
+  });
+}
+if (btnFloatingQuestionManager) {
+  btnFloatingQuestionManager.addEventListener('click', (e) => {
+    e.stopPropagation();
+    openQuestionManagerModal();
+  });
+}
+if (btnTopQuestionManager) {
+  btnTopQuestionManager.addEventListener('click', () => openQuestionManagerModal());
+}
+if (btnCloseQuestionManager) {
+  btnCloseQuestionManager.addEventListener('click', closeQuestionManagerModal);
+}
+if (btnCancelQuestionEdit) {
+  btnCancelQuestionEdit.addEventListener('click', closeQuestionManagerModal);
+}
+if (btnSaveQuestion) {
+  btnSaveQuestion.addEventListener('click', saveCurrentQuestionForm);
+}
+if (btnAddNewQuestion) {
+  btnAddNewQuestion.addEventListener('click', addNewQuestion);
+}
+if (btnDeleteCurrentQuestion) {
+  btnDeleteCurrentQuestion.addEventListener('click', deleteCurrentQuestion);
+}
+if (btnResetDefaultQuestions) {
+  btnResetDefaultQuestions.addEventListener('click', resetDefaultQuestions);
+}
+
+// Socket response events
+socket.on('host:questions_data', (data) => {
+  if (data && data.questions) {
+    questionsData = data.questions;
+    renderQuestionList();
+    selectQuestionToEdit(editingQuestionIndex);
+  }
+});
+
+socket.on('host:save_question_success', (data) => {
+  showToast(data.message || '✅ Đã lưu câu hỏi thành công!');
+  if (data.questions) {
+    questionsData = data.questions;
+    renderQuestionList();
+    if (typeof data.index === 'number') {
+      selectQuestionToEdit(data.index);
+    }
+  }
+});
+
+socket.on('host:question_error', (data) => {
+  showToast('⚠️ ' + (data.message || 'Lỗi thao tác câu hỏi'));
+});
+
+socket.on('quiz:questions_list_updated', (data) => {
+  if (hostProgressDigits && data.totalQuestions) {
+    const curNum = (currentActiveQuestionIdx >= 0) ? currentActiveQuestionIdx + 1 : 0;
+    hostProgressDigits.textContent = `${curNum} / ${data.totalQuestions}`;
+  }
+  if (btnHostBell && data.totalQuestions) {
+    const curNum = (currentActiveQuestionIdx >= 0) ? currentActiveQuestionIdx + 1 : 1;
+    btnHostBell.textContent = `🔔 Thỉnh Chuông (Câu ${curNum}/${data.totalQuestions})`;
+  }
+});
+
+socket.on('quiz:current_question_updated', (data) => {
+  renderHostQuestion(data);
+  showToast('🔔 Câu hỏi đang khảo nghiệm đã được cập nhật nội dung mới!');
+});
 
 if (document.readyState === 'loading') {
   window.addEventListener('DOMContentLoaded', initHost);

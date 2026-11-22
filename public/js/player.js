@@ -755,6 +755,28 @@ socket.on('quiz:question_started', (data) => {
   handleQuestionStarted(data);
 });
 
+// Khi Chủ tọa chỉnh sửa câu hỏi hiện tại trực tiếp trên màn hình máy chủ
+socket.on('quiz:current_question_updated', (data) => {
+  if (isQuestionActive && currentQuizData) {
+    currentQuizData = { ...currentQuizData, ...data };
+    openQuizModal();
+    showToastNotice('🔔 Nội dung câu hỏi vừa được Chủ tọa cập nhật!');
+  }
+});
+
+// Khi tổng số câu hỏi trong đề được thêm/bớt bởi Chủ tọa
+socket.on('quiz:questions_list_updated', (data) => {
+  if (data.totalQuestions && currentQuizData) {
+    currentQuizData.totalQuestions = data.totalQuestions;
+    if (mobileQProgress) {
+      mobileQProgress.textContent = `CÂU ${currentQuizData.questionNumber < 10 ? '0' + currentQuizData.questionNumber : currentQuizData.questionNumber} / ${data.totalQuestions}`;
+    }
+    if (playerProgressBadge) {
+      playerProgressBadge.textContent = `📜 Câu: ${currentQuizData.questionNumber}/${data.totalQuestions}`;
+    }
+  }
+});
+
 function handleQuestionStarted(data) {
   isQuestionActive = true;
   currentQuizData = data;

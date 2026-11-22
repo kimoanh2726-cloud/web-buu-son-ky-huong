@@ -34,9 +34,20 @@
         </div>
         <p>Quét mã ➔ Nhập tên ➔ Chọn chỗ ngồi</p>
         <span id="qrLinkText" class="qr-link-badge">Đang lấy đường dẫn...</span>
-        <span class="qr-click-prompt">🔍 Nhấp để phóng to / quản lý</span>
+        <div class="qr-action-btns">
+          <span class="qr-click-prompt">🔍 Phóng to QR</span>
+          <button type="button" id="btnOpenQuestionManager" class="btn-qr-edit-q" title="Tạo câu hỏi mới hoặc thay đổi câu hỏi, đáp án trực tiếp">
+            ✍️ Tạo & Sửa Câu Hỏi
+          </button>
+        </div>
       </div>
     </div>
+
+    <!-- Biểu tượng nổi tạo câu hỏi gắn liền cạnh mã QR -->
+    <button type="button" id="btnFloatingQuestionManager" class="btn-floating-qr-tool" title="Tạo câu hỏi mới hoặc thay đổi câu hỏi, đáp án trực tiếp">
+      <span class="btn-tool-icon">✍️</span>
+      <span class="btn-tool-label">Tạo Câu Hỏi</span>
+    </button>
 
     <!-- 2. ĐẾM CƯ SĨ & TIỆN ÍCH (GÓC TRÊN PHẢI) -->
     <div class="top-right-tools">
@@ -51,6 +62,9 @@
       </button>
       <button id="btnOpenTop3Host" class="btn-tool" style="display: none;" title="Xem Bảng Vàng Top 3">
         🏆 Top 3 Bảng Vàng
+      </button>
+      <button id="btnTopQuestionManager" class="btn-tool" title="Soạn thảo & Quản lý bộ câu hỏi">
+        ✍️ Soạn Câu Hỏi
       </button>
       <button id="btnHostBell" class="btn-tool btn-bell-highlight" title="Thỉnh đại hồng chung">
         🔔 Thỉnh Chuông (Câu 1/12)
@@ -704,6 +718,120 @@
                 <li>🖨️ <strong>In ấn:</strong> Nhấn <em>"Tải Poster A4 In Ấn (HD)"</em> để xuất ảnh poster chất lượng cao dán cửa Chánh Điện.</li>
                 <li>📱 <strong>Người chơi:</strong> Quét mã bằng Zalo hoặc Ứng dụng Camera trên mọi điện thoại thông minh.</li>
               </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         MODAL 4: BẢNG SOẠN THẢO & QUẢN LÝ CÂU HỎI (QUESTION MANAGER & EDITOR)
+         ===================================================================== -->
+    <div id="modalQuestionManager" class="modal-backdrop" style="display: none;">
+      <div class="modal-card question-manager-modal">
+        <div class="qmm-header">
+          <div class="qmm-title-group">
+            <h2>✍️ SOẠN THẢO & QUẢN LÝ CÂU HỎI KHẢO NGHIỆM</h2>
+            <p class="qmm-subtitle">Chỉnh sửa nội dung câu hỏi, thay đổi đáp án đúng, thêm câu mới và tự động cập nhật ngay sang máy người chơi.</p>
+          </div>
+          <button type="button" id="btnCloseQuestionManager" class="modal-close" title="Đóng bảng">✕</button>
+        </div>
+
+        <div class="qmm-body-grid">
+          <!-- Cột Trái: Danh Sách Câu Hỏi -->
+          <div class="qmm-list-panel">
+            <div class="qmm-list-toolbar">
+              <span class="qmm-count-tag">Danh Sách (<strong id="qListTotal">12</strong> Câu)</span>
+              <div class="qmm-list-btn-row">
+                <button type="button" id="btnAddNewQuestion" class="btn-qmm-mini btn-add-q">➕ Thêm Câu Mới</button>
+                <button type="button" id="btnResetDefaultQuestions" class="btn-qmm-mini btn-reset-q">🔄 Khôi Phục Gốc</button>
+              </div>
+            </div>
+            <div id="questionListItems" class="qmm-items-scroll">
+              <!-- Render danh sách câu hỏi bởi host.js -->
+            </div>
+          </div>
+
+          <!-- Cột Phải: Biểu Mẫu Soạn Thảo & Chỉnh Sửa -->
+          <div class="qmm-edit-panel">
+            <div class="qmm-form-header">
+              <h3 id="qmmEditingTitle">Chỉnh Sửa Câu Hỏi #01</h3>
+              <span id="qmmActiveBadge" class="qmm-active-badge" style="display: none;">🔔 Đang khảo nghiệm trực tiếp</span>
+            </div>
+
+            <div class="qmm-form-scroll">
+              <div class="qmm-row two-cols">
+                <div class="qmm-form-group">
+                  <label for="inputQueSo">Quẻ Số & Tiêu Đề:</label>
+                  <input type="text" id="inputQueSo" class="qmm-input" placeholder="Ví dụ: Quẻ Đệ Nhất, Quẻ Thập Tam...">
+                </div>
+                <div class="qmm-form-group">
+                  <label for="inputChuDe">Chủ Đề Giáo Lý:</label>
+                  <input type="text" id="inputChuDe" class="qmm-input" placeholder="Ví dụ: Bối Cảnh Khai Đạo, Tứ Đại Trọng Ân...">
+                </div>
+              </div>
+
+              <div class="qmm-form-group">
+                <label for="inputCauHoi">Nội Dung Câu Hỏi Khảo Nghiệm:</label>
+                <textarea id="inputCauHoi" class="qmm-textarea" rows="3" placeholder="Nhập câu hỏi chi tiết dành cho các cư sĩ..."></textarea>
+              </div>
+
+              <div class="qmm-options-wrapper">
+                <label class="qmm-label-block">4 Lựa Chọn Trả Lời & Chọn Đáp Án Đúng (Click nút A/B/C/D để đặt làm đáp án đúng):</label>
+                
+                <!-- Option 0 (A) -->
+                <div class="qmm-opt-row" id="qmmOptRow-0">
+                  <label class="qmm-radio-label" title="Chọn làm đáp án đúng">
+                    <input type="radio" name="qmmCorrectChoice" value="0">
+                    <span class="qmm-radio-btn">A</span>
+                  </label>
+                  <input type="text" id="inputOpt-0" class="qmm-input qmm-opt-text" placeholder="Nội dung lựa chọn A...">
+                  <span class="qmm-correct-indicator" id="qmmCorrectTag-0" style="display: none;">✓ ĐÚNG</span>
+                </div>
+
+                <!-- Option 1 (B) -->
+                <div class="qmm-opt-row" id="qmmOptRow-1">
+                  <label class="qmm-radio-label" title="Chọn làm đáp án đúng">
+                    <input type="radio" name="qmmCorrectChoice" value="1">
+                    <span class="qmm-radio-btn">B</span>
+                  </label>
+                  <input type="text" id="inputOpt-1" class="qmm-input qmm-opt-text" placeholder="Nội dung lựa chọn B...">
+                  <span class="qmm-correct-indicator" id="qmmCorrectTag-1" style="display: none;">✓ ĐÚNG</span>
+                </div>
+
+                <!-- Option 2 (C) -->
+                <div class="qmm-opt-row" id="qmmOptRow-2">
+                  <label class="qmm-radio-label" title="Chọn làm đáp án đúng">
+                    <input type="radio" name="qmmCorrectChoice" value="2">
+                    <span class="qmm-radio-btn">C</span>
+                  </label>
+                  <input type="text" id="inputOpt-2" class="qmm-input qmm-opt-text" placeholder="Nội dung lựa chọn C...">
+                  <span class="qmm-correct-indicator" id="qmmCorrectTag-2" style="display: none;">✓ ĐÚNG</span>
+                </div>
+
+                <!-- Option 3 (D) -->
+                <div class="qmm-opt-row" id="qmmOptRow-3">
+                  <label class="qmm-radio-label" title="Chọn làm đáp án đúng">
+                    <input type="radio" name="qmmCorrectChoice" value="3">
+                    <span class="qmm-radio-btn">D</span>
+                  </label>
+                  <input type="text" id="inputOpt-3" class="qmm-input qmm-opt-text" placeholder="Nội dung lựa chọn D...">
+                  <span class="qmm-correct-indicator" id="qmmCorrectTag-3" style="display: none;">✓ ĐÚNG</span>
+                </div>
+              </div>
+
+              <div class="qmm-form-group">
+                <label for="inputLoiGiai">Lời Giải Nghĩa Tâm Linh Của Đức Phật Thầy (Hiện khi công bố đáp án):</label>
+                <textarea id="inputLoiGiai" class="qmm-textarea" rows="3" placeholder="Lời khai thị, giải nghĩa giáo lý khi hết giờ..."></textarea>
+              </div>
+            </div>
+
+            <div class="qmm-form-footer">
+              <button type="button" id="btnDeleteCurrentQuestion" class="btn-qmm-delete" title="Xóa câu hỏi này">🗑️ Xóa Câu Này</button>
+              <div class="qmm-footer-actions">
+                <button type="button" id="btnCancelQuestionEdit" class="btn-qmm-cancel">Đóng</button>
+                <button type="button" id="btnSaveQuestion" class="btn-qmm-save">💾 Lưu & Đồng Bộ Sang Người Chơi</button>
+              </div>
             </div>
           </div>
         </div>

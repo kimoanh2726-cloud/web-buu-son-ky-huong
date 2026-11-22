@@ -5,8 +5,44 @@ const os = require('os');
 const QRCode = require('qrcode');
 const path = require('path');
 const compression = require('compression');
+const fs = require('fs');
 const { spawn } = require('child_process');
-const QUESTIONS = require('./public/js/questions');
+
+const DEFAULT_QUESTIONS = require('./public/js/questions');
+const QUESTIONS_FILE = path.join(__dirname, 'data', 'questions.json');
+
+function loadQuestions() {
+  try {
+    if (fs.existsSync(QUESTIONS_FILE)) {
+      const data = fs.readFileSync(QUESTIONS_FILE, 'utf8');
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        console.log(`[Questions] Đã nạp ${parsed.length} câu hỏi từ data/questions.json`);
+        return parsed;
+      }
+    }
+  } catch (err) {
+    console.error('[Questions] Lỗi đọc questions.json:', err.message);
+  }
+  return JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+}
+
+function saveQuestionsToDisk(questionsList) {
+  try {
+    const dataDir = path.join(__dirname, 'data');
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    fs.writeFileSync(QUESTIONS_FILE, JSON.stringify(questionsList, null, 2), 'utf8');
+    console.log(`[Questions] Đã lưu ${questionsList.length} câu hỏi vào data/questions.json`);
+    return true;
+  } catch (err) {
+    console.error('[Questions] Lỗi lưu questions.json:', err.message);
+    return false;
+  }
+}
+
+let QUESTIONS = loadQuestions();
 
 const app = express();
 const server = http.createServer(app);
@@ -643,6 +679,7 @@ io.on('connection', (socket) => {
       seats,
       totalOccupied: seats.filter(s => !!s.occupant).length,
       players: Array.from(gameState.players.values()),
+      questions: QUESTIONS,
       quizState: {
         currentIndex: quizState.currentIndex,
         questionNumber: quizState.currentIndex + 1,
@@ -771,6 +808,132 @@ io.on('connection', (socket) => {
   socket.on('host:restart_game', () => {
     if (!socket.isHost) return;
     restartGame();
+  });
+
+  // 6e. Host lấy danh sách câu hỏi để quản lý & soạn thảo
+  socket.on('host:get_questions', () => {
+    if (!socket.isHost) return;
+    socket.emit('host:questions_data', { questions: QUESTIONS });
+  });
+
+  // 6f. Host lưu câu hỏi (chỉnh sửa nội dung, thay đổi đáp án hoặc tạo mới)
+  socket.on('host:save_question', (data) => {
+    if (!socket.isHost || !data || !data.question) return;
+    const { index, question } = data;
+    
+    const cleanQ = {
+      id: typeof question.id === 'number' ? question.id : QUESTIONS.length + 1,
+      que_so: (question.que_so || 'Quẻ Đệ Nhất').trim(),
+      chu_de: (question.chu_de || 'Giáo Lý').trim(),
+      cau_hoi: (question.cau_hoi || '').trim(),
+      cac_lua_chon: Array.isArray(question.cac_lua_chon) ? question.cac_lua_chon.map(c => (c || '').toString().trim()) : ['', '', '', ''],
+      dap_an_dung: Math.max(0, Math.min(3, parseInt(question.dap_an_dung) || 0)),
+      loi_giai: (question.loi_giai || '').trim()
+    };
+
+    let isNew = false;
+    let targetIndex = index;
+    if (typeof index === 'number' && index >= 0 && index < QUESTIONS.length) {
+      cleanQ.id = QUESTIONS[index].id || (index + 1);
+      QUESTIONS[index] = cleanQ;
+    } else {
+      isNew = true;
+      cleanQ.id = QUESTIONS.length + 1;
+      QUESTIONS.push(cleanQ);
+      targetIndex = QUESTIONS.length - 1;
+    }
+
+    quizState.totalQuestions = QUESTIONS.length;
+    saveQuestionsToDisk(QUESTIONS);
+
+    socket.emit('host:save_question_success', {
+      message: isNew ? '✅ Đã thêm câu hỏi mới thành công!' : '✅ Đã lưu và cập nhật câu hỏi thành công!',
+      index: targetIndex,
+      questions: QUESTIONS
+    });
+
+    // Phát sóng cập nhật tổng số câu tới tất cả người chơi & máy chủ
+    io.emit('quiz:questions_list_updated', {
+      totalQuestions: QUESTIONS.length
+    });
+
+    // Nếu sửa trúng câu đang hiển thị trực tiếp trên màn hình khảo nghiệm
+    if (quizState.currentIndex === targetIndex) {
+      io.emit('quiz:current_question_updated', {
+        questionIndex: quizState.currentIndex,
+        questionNumber: quizState.currentIndex + 1,
+        totalQuestions: quizState.totalQuestions,
+        queSo: cleanQ.que_so,
+        chuDe: cleanQ.chu_de,
+        cauHoi: cleanQ.cau_hoi,
+        cacLuaChon: cleanQ.cac_lua_chon,
+        timeLimit: quizState.timeLimit,
+        remainingTime: quizState.remainingTime,
+        correctAnswer: quizState.isRevealed ? cleanQ.dap_an_dung : null,
+        loiGiai: quizState.isRevealed ? cleanQ.loi_giai : null
+      });
+    }
+  });
+
+  // 6g. Host xóa câu hỏi
+  socket.on('host:delete_question', (data) => {
+    if (!socket.isHost || !data || typeof data.index !== 'number') return;
+    if (QUESTIONS.length <= 1) {
+      socket.emit('host:question_error', { message: 'Cần duy trì tối thiểu 1 câu hỏi trong hệ thống!' });
+      return;
+    }
+    const idx = data.index;
+    if (idx >= 0 && idx < QUESTIONS.length) {
+      QUESTIONS.splice(idx, 1);
+      QUESTIONS.forEach((q, i) => { q.id = i + 1; });
+      quizState.totalQuestions = QUESTIONS.length;
+      saveQuestionsToDisk(QUESTIONS);
+
+      socket.emit('host:save_question_success', {
+        message: '🗑️ Đã xóa câu hỏi thành công!',
+        index: Math.min(idx, QUESTIONS.length - 1),
+        questions: QUESTIONS
+      });
+
+      io.emit('quiz:questions_list_updated', {
+        totalQuestions: QUESTIONS.length
+      });
+    }
+  });
+
+  // 6h. Host khôi phục bộ 12 câu gốc ban đầu
+  socket.on('host:reset_questions', () => {
+    if (!socket.isHost) return;
+    QUESTIONS = JSON.parse(JSON.stringify(DEFAULT_QUESTIONS));
+    quizState.totalQuestions = QUESTIONS.length;
+    saveQuestionsToDisk(QUESTIONS);
+
+    socket.emit('host:save_question_success', {
+      message: '🔄 Đã khôi phục 12 câu hỏi gốc của Đức Phật Thầy!',
+      index: 0,
+      questions: QUESTIONS
+    });
+
+    io.emit('quiz:questions_list_updated', {
+      totalQuestions: QUESTIONS.length
+    });
+
+    if (quizState.currentIndex >= 0 && quizState.currentIndex < QUESTIONS.length) {
+      const curQ = QUESTIONS[quizState.currentIndex];
+      io.emit('quiz:current_question_updated', {
+        questionIndex: quizState.currentIndex,
+        questionNumber: quizState.currentIndex + 1,
+        totalQuestions: quizState.totalQuestions,
+        queSo: curQ.que_so,
+        chuDe: curQ.chu_de,
+        cauHoi: curQ.cau_hoi,
+        cacLuaChon: curQ.cac_lua_chon,
+        timeLimit: quizState.timeLimit,
+        remainingTime: quizState.remainingTime,
+        correctAnswer: quizState.isRevealed ? curQ.dap_an_dung : null,
+        loiGiai: quizState.isRevealed ? curQ.loi_giai : null
+      });
+    }
   });
 
   // 7. Người chơi tham gia phòng (Lọc triệt để XSS & Giới hạn tối đa người chơi)
