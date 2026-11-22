@@ -1,8 +1,24 @@
 # 🏮 BỬU SƠN KỲ HƯƠNG — ĐẠO TRÀNG CHÁNH ĐIỆN 50 CHỖ & KHẢO NGHIỆM GIÁO LÝ THỜI GIAN THỰC
 
 [![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/kimoanh2726-cloud/web-buu-son-ky-huong)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Online%2024%2F7-brightgreen?style=for-the-badge&logo=render)](https://buu-son-ky-huong.onrender.com)
+[![Host Controller](https://img.shields.io/badge/Host-M%C3%A1y%20Ch%E1%BB%A7%20Qu%E1%BA%A3n%20Tr%E1%BB%8B-gold?style=for-the-badge)](https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026)
 
 > **Nền tảng tương tác thời gian thực (Real-time Multiplayer)** tái hiện không gian Chánh Điện tâm linh Bửu Sơn Kỳ Hương (Phật Thầy Tây An) với 50 chiếu cói cố định, đồng bộ hành vi đi lại - an vị - vấn đạo giáo lý giữa Máy Chủ (Host) và hàng chục người chơi (Player) đồng thời qua Internet (4G/5G/Wi-Fi).
+
+---
+
+## 📌 GHIM ĐƯỜNG DẪN TRUY CẬP CHÍNH THỨC (ONLINE 24/7)
+
+Hệ thống đã được triển khai hoạt động ổn định trên máy chủ Cloud Singapore với độ trễ cực thấp (<30ms):
+
+| Vai trò | Đường dẫn truy cập trực tiếp | Hướng dẫn sử dụng |
+| :--- | :--- | :--- |
+| 📱 **Người Chơi (Player)** | [👉 **https://buu-son-ky-huong.onrender.com/player.html**](https://buu-son-ky-huong.onrender.com/player.html) | Quét mã QR hoặc mở trực tiếp trên điện thoại thông minh (4G/5G/Wi-Fi) để nhập pháp danh, đi lại và an vị vào 50 chiếu |
+| 🖥️ **Máy Chủ (Host Quản Trị)** | [👉 **https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026**](https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026) | Dành cho Chủ Tọa điều khiển buổi lễ: thỉnh chuông, chỉnh thời gian, điều hướng câu hỏi, bật/tắt bảng và vinh danh Top 3 |
+
+* 🔑 **Mã Khóa Bảo Mật Chủ Tọa (Host Token):** `buusonkyhuong2026`
+* 🌐 **Tự Động Chuyển Hướng:** Khách truy cập vào trang chủ `https://buu-son-ky-huong.onrender.com` nếu không có khóa bí mật sẽ tự động được điều hướng đến màn hình Người Chơi.
 
 ---
 
@@ -38,6 +54,7 @@ Hệ thống đã được tích hợp sẵn các công nghệ tối ưu tốc �
 * **GZIP Compression:** Giảm 75-80% dung lượng HTML/CSS/JS tải về điện thoại người chơi.
 * **Smart HTTP Caching:** Tự động lưu cache CSS, JS, Audio, Font trong 1 ngày; điện thoại người chơi truy cập tức thì trong vài mili-giây.
 * **WebSocket Low-Latency:** Kết nối Socket.io trực tiếp hai chiều, tự động kết nối lại siêu tốc (500ms) nếu mạng 4G/5G chập chờn.
+* **Favicon Chú Rùa:** Biểu tượng chú rùa tâm linh Bửu Sơn Kỳ Hương hiển thị đồng bộ trên mọi tab trình duyệt và màn hình chính.
 
 ---
 
@@ -60,36 +77,14 @@ npm start
 
 ---
 
-## 🌐 HƯỚNG DẪN ĐẨY LÊN GITHUB & DEPLOY CLOUD MIỄN PHÍ SIÊU TỐC
+## 📍 GHIM TỔNG HỢP ĐƯỜNG DẪN TRUY CẬP (PINNED LINKS)
 
-### Bước 1: Đẩy Dự Án Lên GitHub
-1. Mở trang [GitHub.com](https://github.com), tạo một Repository mới (ví dụ: `web-buu-son-ky-huong`).
-2. Mở terminal tại thư mục dự án và chạy các lệnh sau:
-```bash
-git init
-git add .
-git commit -m "feat: Đạo tràng Chánh Điện 50 chỗ Bửu Sơn Kỳ Hương v1.0"
-git branch -M main
-git remote add origin https://github.com/<TÊN_GITHUB_CỦA_BẠN>/web-buu-son-ky-huong.git
-git push -u origin main
-```
+Dành cho Ban Tổ Chức và Tín Đồ truy cập trực tiếp:
 
-### Bước 2: Triển Khai Cloud Siêu Tốc (Render.com) — Miễn Phí 100%
-Để người chơi và máy chủ vào **cực nhanh, không độ trễ, không cần cắm máy tính tại nhà**:
-1. Truy cập [Render.com](https://render.com), đăng nhập bằng tài khoản GitHub.
-2. Nhấn nút **New +** ➔ Chọn **Web Service**.
-3. Chọn kho mã nguồn `web-buu-son-ky-huong` bạn vừa đẩy lên.
-4. Điền cấu hình cơ bản:
-   * **Name:** `buu-son-ky-huong`
-   * **Region:** `Singapore` (Chọn Singapore để người chơi ở Việt Nam có tốc độ nhanh nhất, ping <30ms!)
-   * **Branch:** `main`
-   * **Runtime:** `Node`
-   * **Build Command:** `npm install`
-   * **Start Command:** `npm start`
-   * **Instance Type:** `Free`
-5. Nhấn **Create Web Service**.
-Sau khoảng 1-2 phút, bạn sẽ nhận được đường link cố định HTTPS (ví dụ: `https://buu-son-ky-huong.onrender.com`).
-* Mọi người chơi ở bất kỳ đâu chỉ cần quét mã QR hoặc truy cập đường link trên là vào tức thì!
+* 📱 **Trang Người Chơi (Mobile/PC):** [https://buu-son-ky-huong.onrender.com/player.html](https://buu-son-ky-huong.onrender.com/player.html)
+* 🖥️ **Trang Máy Chủ Chủ Tọa:** [https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026](https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026)
+* 🔐 **Khóa Quản Trị Máy Chủ:** `buusonkyhuong2026`
+* ☁️ **Hạ tầng máy chủ:** Render Cloud (Region Singapore) — Hoạt động trực tuyến 24/7
 
 ---
 
