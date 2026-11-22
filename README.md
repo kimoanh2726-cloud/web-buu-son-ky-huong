@@ -8,18 +8,6 @@
 
 ---
 
-## 📌 GHIM ĐƯỜNG DẪN TRUY CẬP CHÍNH THỨC (ONLINE 24/7)
-
-Hệ thống đã được triển khai hoạt động ổn định trên máy chủ Cloud Singapore với độ trễ cực thấp (<30ms):
-
-| Vai trò | Đường dẫn truy cập trực tiếp | Hướng dẫn sử dụng |
-| :--- | :--- | :--- |
-| 📱 **Người Chơi (Player)** | [👉 **https://buu-son-ky-huong.onrender.com/player.html**](https://buu-son-ky-huong.onrender.com/player.html) | Quét mã QR hoặc mở trực tiếp trên điện thoại thông minh (4G/5G/Wi-Fi) để nhập pháp danh, đi lại và an vị vào 50 chiếu |
-| 🖥️ **Máy Chủ (Host Quản Trị)** | [👉 **https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026**](https://buu-son-ky-huong.onrender.com/?key=buusonkyhuong2026) | Dành cho Chủ Tọa điều khiển buổi lễ: thỉnh chuông, chỉnh thời gian, điều hướng câu hỏi, bật/tắt bảng và vinh danh Top 3 |
-
-* 🔑 **Mã Khóa Bảo Mật Chủ Tọa (Host Token):** `buusonkyhuong2026`
-* 🌐 **Tự Động Chuyển Hướng:** Khách truy cập vào trang chủ `https://buu-son-ky-huong.onrender.com` nếu không có khóa bí mật sẽ tự động được điều hướng đến màn hình Người Chơi.
-
 ---
 
 ## 🌟 ĐẶC ĐIỂM NỔI BẬT
