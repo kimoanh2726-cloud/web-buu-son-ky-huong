@@ -732,38 +732,127 @@
               <p class="qm-sub-note">Bạn cũng có thể dán đường dẫn tên miền riêng hoặc tunnel khác nếu cần.</p>
             </div>
 
-            <!-- MỤC QUẢN TRỊ BỘ CÂU HỎI NGAY TẠI BẢNG QR -->
-            <div class="qm-section qm-questions-section">
-              <h3>📚 NHẬN CÂU HỎI & TRỘN ĐỀ THI (.XLSX / .DOCX)</h3>
-              <p class="qm-desc">
-                Nhập file câu hỏi Excel (.xlsx) hoặc Word (.docx) để hệ thống tự động nhận dạng cấu trúc câu hỏi, sau đó bấm nút áp dụng thay đổi bộ câu hỏi hiện tại để đồng bộ tức thì sang toàn bộ máy người chơi.
-              </p>
-              
-              <div class="qm-questions-btn-grid">
-                <button type="button" id="btnModalImportFile" class="btn-qm-action btn-qm-import" title="Tải lên file Excel (.xlsx) hoặc Word (.docx)">
-                  📥 Nhận File Câu Hỏi (.xlsx / .docx)
-                </button>
-                <button type="button" id="btnModalShuffle" class="btn-qm-action btn-qm-shuffle" title="Trộn câu hỏi và đảo ngẫu nhiên đáp án">
-                  🔀 Trộn Đề Thi & Đáp Án
-                </button>
-                <button type="button" id="btnModalOpenQuestionManager" class="btn-qm-action btn-qm-edit" title="Mở bảng soạn thảo & chỉnh sửa chi tiết">
-                  ✍️ Soạn & Sửa Câu Hỏi
-                </button>
+            <!-- KHU VỰC HƯỚNG DẪN & 2 TÍNH NĂNG ĐẶC BIỆT DÀNH CHO BAN TỔ CHỨC -->
+            <div class="qm-section qm-btc-section">
+              <div class="qm-btc-header">
+                <h3>📋 HƯỚNG DẪN & QUẢN TRỊ ĐỀ THI DÀNH CHO BAN TỔ CHỨC</h3>
+                <span class="qm-btc-tag">Chủ Tọa & Ban Quản Trị</span>
               </div>
-
-              <div id="qmDropZone" class="qm-drop-zone">
-                <span class="drop-icon">📁</span>
-                <span class="drop-text">Kéo thả file <strong>.xlsx</strong> hoặc <strong>.docx</strong> vào đây để nạp câu hỏi tức thì</span>
-              </div>
-            </div>
-
-            <div class="qm-section">
-              <h3>ℹ️ HƯỚNG DẪN DÀNH CHO BAN TỔ CHỨC</h3>
               <ul class="qm-guide-list">
-                <li>📌 <strong>Trình chiếu:</strong> Nhấn <em>"Phóng To Chiếu Màn Hình"</em> để chiếu mã QR lớn lên màn hình máy chiếu tại giảng đường.</li>
+                <li>📌 <strong>Trình chiếu:</strong> Nhấn <em>"Phóng To Chiếu Màn Hình"</em> để chiếu mã QR lớn lên máy chiếu tại giảng đường.</li>
                 <li>🖨️ <strong>In ấn:</strong> Nhấn <em>"Tải Poster A4 In Ấn (HD)"</em> để xuất ảnh poster chất lượng cao dán cửa Chánh Điện.</li>
-                <li>📱 <strong>Người chơi:</strong> Quét mã bằng Zalo hoặc Ứng dụng Camera trên mọi điện thoại thông minh.</li>
+                <li>📱 <strong>Người chơi:</strong> Quét mã bằng Zalo hoặc Ứng dụng Camera trên mọi điện thoại thông minh để an vị.</li>
               </ul>
+
+              <!-- ==============================================================
+                   TÍNH NĂNG 1: BỘ ĐỀ HIỆN TẠI (XEM CÂU HỎI & XUẤT ĐỀ DOCX / XLSX)
+                   ============================================================== -->
+              <div class="qm-feature-card feature-de">
+                <div class="feature-card-header">
+                  <div class="feature-title-group">
+                    <span class="feature-badge num-1">TÍNH NĂNG 1</span>
+                    <h4 class="feature-title">📜 BỘ ĐỀ KHẢO NGHIỆM HIỆN TẠI (<span id="qmCurrentQuestionsCount">12</span> CÂU)</h4>
+                  </div>
+                  <span class="feature-status-note">Tự động đồng bộ khi Tính Năng 2 thay đổi</span>
+                </div>
+                
+                <p class="feature-desc">
+                  Xem trực tiếp toàn bộ các câu hỏi mà hệ thống đang sử dụng cho buổi khảo nghiệm. Bạn có thể xuất đề bài ra file Word hoặc Excel bất kỳ lúc nào:
+                </p>
+
+                <!-- Các nút hành động của Tính năng 1 -->
+                <div class="feature-actions-row">
+                  <button type="button" id="btnExportDocx" class="btn-feature-act btn-exp-docx" title="Tải xuống đề thi dưới dạng file Word (.docx) chuẩn in ấn">
+                    📄 Xuất Đề Word (.docx)
+                  </button>
+                  <button type="button" id="btnExportXlsx" class="btn-feature-act btn-exp-xlsx" title="Tải xuống đề thi dưới dạng file Excel (.xlsx) chuẩn Quizizz/Bảng điểm">
+                    📊 Xuất Đề Excel (.xlsx)
+                  </button>
+                  <button type="button" id="btnQmShuffleFeature" class="btn-feature-act btn-shuffle-act" title="Xáo trộn ngẫu nhiên thứ tự câu hỏi và 4 lựa chọn">
+                    🔀 Trộn Đề & Đảo Đáp Án
+                  </button>
+                  <button type="button" id="btnToggleCurrentQuestions" class="btn-feature-act btn-view-act" title="Ẩn hoặc hiện danh sách chi tiết các câu hỏi">
+                    👁️ Thu Gọn / Xem Đề
+                  </button>
+                </div>
+
+                <!-- Khung hiển thị danh sách câu hỏi hiện tại (Tự động cập nhật theo Tính năng 2) -->
+                <div id="qmCurrentQuestionsWrap" class="qm-current-questions-wrap">
+                  <div class="qm-cq-header-bar">
+                    <span>Danh sách chi tiết câu hỏi đang dùng trên web:</span>
+                    <span class="qm-cq-sync-tag">🟢 Đang kích hoạt trực tiếp</span>
+                  </div>
+                  <div id="qmCurrentQuestionsList" class="qm-cq-list-scroll">
+                    <!-- Được tự động render & cập nhật bởi host.js -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- ==============================================================
+                   TÍNH NĂNG 2: NHẬP FILE CÂU HỎI & TỰ TÌM ĐÁP ÁN ĐÚNG (.DOCX / .XLSX)
+                   ============================================================== -->
+              <div class="qm-feature-card feature-import">
+                <div class="feature-card-header">
+                  <div class="feature-title-group">
+                    <span class="feature-badge num-2">TÍNH NĂNG 2</span>
+                    <h4 class="feature-title">📥 NHẬP FILE CÂU HỎI & TỰ TÌM ĐÁP ÁN ĐÚNG (.DOCX / .XLSX)</h4>
+                  </div>
+                  <span class="feature-ai-tag">✨ Tự Động Quét Dấu Hiệu Đáp Án</span>
+                </div>
+
+                <p class="feature-desc">
+                  Tải lên tài liệu của bạn (file <strong>.docx</strong> Word hoặc <strong>.xlsx</strong> Excel). Hệ thống có khả năng <strong>tự động tìm chính xác đáp án đúng</strong> dựa trên các dấu hiệu trong file bạn gửi lên:
+                </p>
+
+                <!-- Các dấu hiệu nhận dạng đáp án đúng -->
+                <div class="qm-answer-hints">
+                  <span class="hint-title">💡 Các dấu hiệu nhận dạng đáp án đúng:</span>
+                  <div class="hint-tags">
+                    <span class="hint-tag">✓ Dòng <em>Đáp án: A/B/C/D</em></span>
+                    <span class="hint-tag">✓ Dấu sao <em>*A.</em> hoặc <em>A.*</em></span>
+                    <span class="hint-tag">✓ Chữ <em>in đậm</em> / <em>gạch chân</em> trong Word</span>
+                    <span class="hint-tag">✓ Cột <em>Correct Answer</em> trong Excel</span>
+                    <span class="hint-tag">✓ Ký hiệu <em>[x]</em> hoặc <em>(đúng)</em></span>
+                    <span class="hint-tag">✓ Bảng đáp án cuối đề thi</span>
+                  </div>
+                </div>
+
+                <!-- Nút tải file và vùng kéo thả -->
+                <div class="qm-upload-box">
+                  <button type="button" id="btnQmUploadFile" class="btn-qm-upload-main">
+                    📤 Tải Lên File Đề Thi (.docx / .xlsx)
+                  </button>
+                  <div id="qmUploadDropZone" class="qm-upload-drop-zone">
+                    <span class="drop-icon">📁</span>
+                    <span class="drop-text">Hoặc kéo thả file <strong>.docx</strong> / <strong>.xlsx</strong> vào đây</span>
+                  </div>
+                </div>
+
+                <!-- Khung kết quả phân tích file & Nút Áp Dụng Thay Đổi (Hiện khi có file được tải lên) -->
+                <div id="qmImportResultBox" class="qm-import-result-box" style="display: none;">
+                  <div class="qm-ir-summary">
+                    <div class="qm-ir-meta">
+                      📁 File: <strong id="qmIrFileName" style="color: #ffd700;">—</strong>
+                      | Loại: <strong id="qmIrFileType" class="file-type-pill">—</strong>
+                      | Số câu nhận dạng: <strong id="qmIrCount" class="count-pill">0</strong>
+                    </div>
+                    <div class="qm-ir-badge">✓ Đã tìm thấy đầy đủ đáp án đúng</div>
+                  </div>
+
+                  <div id="qmIrPreviewList" class="qm-ir-preview-scroll">
+                    <!-- Danh sách câu hỏi nhận dạng với đáp án đúng tìm được -->
+                  </div>
+
+                  <div class="qm-ir-actions">
+                    <button type="button" id="btnApplyImportedQuestionsInline" class="btn-apply-imported-quiz">
+                      🚀 ÁP DỤNG THAY ĐỔI BỘ CÂU HỎI HIỆN TẠI
+                    </button>
+                    <span class="qm-ir-tip">Bấm nút trên để thay đổi bộ đề web đang dùng, tự động cập nhật sang Tính Năng 1 và toàn bộ người chơi.</span>
+                  </div>
+                </div>
+
+              </div>
+
             </div>
           </div>
         </div>

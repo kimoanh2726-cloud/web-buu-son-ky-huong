@@ -148,6 +148,26 @@ const qmDropZone = document.getElementById('qmDropZone');
 const btnManagerImportFile = document.getElementById('btnManagerImportFile');
 const btnManagerShuffle = document.getElementById('btnManagerShuffle');
 
+// 2 Tính năng đặc biệt trong Modal Quản lý QR dành cho Ban Tổ Chức
+// Tính năng 1: Đề thi hiện tại & Xuất file
+const btnExportDocx = document.getElementById('btnExportDocx');
+const btnExportXlsx = document.getElementById('btnExportXlsx');
+const btnQmShuffleFeature = document.getElementById('btnQmShuffleFeature');
+const btnToggleCurrentQuestions = document.getElementById('btnToggleCurrentQuestions');
+const qmCurrentQuestionsWrap = document.getElementById('qmCurrentQuestionsWrap');
+const qmCurrentQuestionsCount = document.getElementById('qmCurrentQuestionsCount');
+const qmCurrentQuestionsList = document.getElementById('qmCurrentQuestionsList');
+
+// Tính năng 2: Nhập file câu hỏi & tự tìm đáp án đúng
+const btnQmUploadFile = document.getElementById('btnQmUploadFile');
+const qmUploadDropZone = document.getElementById('qmUploadDropZone');
+const qmImportResultBox = document.getElementById('qmImportResultBox');
+const qmIrFileName = document.getElementById('qmIrFileName');
+const qmIrFileType = document.getElementById('qmIrFileType');
+const qmIrCount = document.getElementById('qmIrCount');
+const qmIrPreviewList = document.getElementById('qmIrPreviewList');
+const btnApplyImportedQuestionsInline = document.getElementById('btnApplyImportedQuestionsInline');
+
 // Import Preview Modal DOM
 const modalImportPreview = document.getElementById('modalImportPreview');
 const btnCloseImportPreview = document.getElementById('btnCloseImportPreview');
@@ -359,6 +379,9 @@ socket.on('host:state', (data) => {
   if (data.questions && Array.isArray(data.questions)) {
     questionsData = data.questions;
     renderQuestionList();
+    if (typeof renderQmCurrentQuestions === 'function') {
+      renderQmCurrentQuestions(questionsData);
+    }
   }
 
   // Khôi phục trạng thái câu hỏi nếu đang diễn ra
@@ -1020,7 +1043,12 @@ if (qrBox) {
 }
 
 function openQrManagerModal() {
-  if (modalQrManager) modalQrManager.style.display = 'flex';
+  if (modalQrManager) {
+    modalQrManager.style.display = 'flex';
+    if (typeof renderQmCurrentQuestions === 'function') {
+      renderQmCurrentQuestions(questionsData);
+    }
+  }
 }
 
 function closeQrManagerModal() {
@@ -1736,6 +1764,126 @@ function renderImportPreviewCards(list) {
   });
 }
 
+// 4b. Render danh sách câu hỏi của TÍNH NĂNG 1 (Đề thi hiện tại trong Modal QR)
+function renderQmCurrentQuestions(questions) {
+  const list = (questions && questions.length > 0) ? questions : questionsData;
+  if (qmCurrentQuestionsCount) {
+    qmCurrentQuestionsCount.textContent = list.length;
+  }
+  if (!qmCurrentQuestionsList) return;
+
+  qmCurrentQuestionsList.innerHTML = '';
+  list.forEach((q, idx) => {
+    const item = document.createElement('div');
+    item.className = 'qm-cq-item';
+    const correctIdx = typeof q.dap_an_dung === 'number' ? q.dap_an_dung : 0;
+    const opts = Array.isArray(q.cac_lua_chon) ? q.cac_lua_chon : ['', '', '', ''];
+    const letter = ['A', 'B', 'C', 'D'];
+
+    let optsHtml = '';
+    opts.forEach((optText, oIdx) => {
+      const isCorrect = (oIdx === correctIdx);
+      optsHtml += `
+        <div class="qm-cq-opt-pill ${isCorrect ? 'is-correct' : ''}">
+          <strong>${letter[oIdx]}.</strong> ${escapeHtml(optText || '')} ${isCorrect ? ' (✓ ĐÚNG)' : ''}
+        </div>
+      `;
+    });
+
+    item.innerHTML = `
+      <div class="qm-cq-title">Câu ${idx + 1}: ${escapeHtml(q.cau_hoi || '')}</div>
+      <div class="qm-cq-topic">${escapeHtml(q.que_so || `Quẻ #${idx + 1}`)} • ${escapeHtml(q.chu_de || 'Giáo Lý')}</div>
+      <div class="qm-cq-opts-grid">${optsHtml}</div>
+      ${q.loi_giai ? `<div style="font-size: 10px; color: #ffd700; margin-top: 3px; font-style: italic;">💡 Ý nghĩa: ${escapeHtml(q.loi_giai)}</div>` : ''}
+    `;
+    qmCurrentQuestionsList.appendChild(item);
+  });
+}
+
+// 4c. Render danh sách xem trước của TÍNH NĂNG 2 (Khung kết quả phân tích file)
+function renderQmInlinePreview(list) {
+  if (!qmIrPreviewList) return;
+  qmIrPreviewList.innerHTML = '';
+
+  list.forEach((q, idx) => {
+    const row = document.createElement('div');
+    row.style.cssText = 'background: rgba(20,10,5,0.8); border: 1px solid rgba(74,222,128,0.3); border-radius: 4px; padding: 6px 8px; font-size: 11px; color: #f7ede2;';
+    const letter = ['A', 'B', 'C', 'D'][q.dap_an_dung || 0] || 'A';
+    const correctText = (q.cac_lua_chon && q.cac_lua_chon[q.dap_an_dung]) || '';
+
+    row.innerHTML = `
+      <div style="font-weight: 700; color: #ffd700;">#${idx + 1}. ${escapeHtml(q.cau_hoi || '')}</div>
+      <div style="color: #86efac; margin-top: 2px;">
+        ✓ Đáp án đúng tìm thấy: <strong style="color: #ffd700;">${letter}.</strong> ${escapeHtml(correctText)}
+      </div>
+    `;
+    qmIrPreviewList.appendChild(row);
+  });
+}
+
+// Gắn sự kiện các nút TÍNH NĂNG 1 (Đề)
+if (btnExportDocx) {
+  btnExportDocx.addEventListener('click', () => {
+    showToast('📄 Đang xuất đề thi ra file Word (.docx)...');
+    window.location.href = `/api/questions/export/docx?token=${encodeURIComponent(hostKey)}`;
+  });
+}
+if (btnExportXlsx) {
+  btnExportXlsx.addEventListener('click', () => {
+    showToast('📊 Đang xuất đề thi ra file Excel (.xlsx)...');
+    window.location.href = `/api/questions/export/xlsx?token=${encodeURIComponent(hostKey)}`;
+  });
+}
+if (btnQmShuffleFeature) {
+  btnQmShuffleFeature.addEventListener('click', triggerShuffleClick);
+}
+if (btnToggleCurrentQuestions) {
+  btnToggleCurrentQuestions.addEventListener('click', () => {
+    if (qmCurrentQuestionsWrap) {
+      const isVisible = (qmCurrentQuestionsWrap.style.display !== 'none');
+      qmCurrentQuestionsWrap.style.display = isVisible ? 'none' : 'block';
+      btnToggleCurrentQuestions.textContent = isVisible ? '👁️ Xem Chi Tiết Đề' : '👁️ Thu Gọn Đề';
+    }
+  });
+}
+
+// Gắn sự kiện các nút TÍNH NĂNG 2 (Nhập file)
+if (btnQmUploadFile) {
+  btnQmUploadFile.addEventListener('click', triggerFileInput);
+}
+if (qmUploadDropZone) {
+  qmUploadDropZone.addEventListener('click', triggerFileInput);
+  qmUploadDropZone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    qmUploadDropZone.classList.add('dragover');
+  });
+  qmUploadDropZone.addEventListener('dragleave', () => {
+    qmUploadDropZone.classList.remove('dragover');
+  });
+  qmUploadDropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    qmUploadDropZone.classList.remove('dragover');
+    if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      handleQuestionFile(e.dataTransfer.files[0]);
+    }
+  });
+}
+
+// Nút áp dụng thay đổi câu hỏi trực tiếp trong Tính Năng 2
+if (btnApplyImportedQuestionsInline) {
+  btnApplyImportedQuestionsInline.addEventListener('click', () => {
+    if (!pendingImportedQuestions || pendingImportedQuestions.length === 0) {
+      alert('Chưa có danh sách câu hỏi nào được nạp!');
+      return;
+    }
+    showToast('🚀 Đang thay đổi bộ câu hỏi hiện tại và đồng bộ sang máy người chơi...');
+    socket.emit('host:apply_imported_questions', {
+      questions: pendingImportedQuestions,
+      mode: 'replace'
+    });
+  });
+}
+
 // 5. Khi Server trả về kết quả phân tích file thành công
 socket.on('host:file_parsed', (data) => {
   pendingImportedQuestions = data.questions || [];
@@ -1743,9 +1891,16 @@ socket.on('host:file_parsed', (data) => {
   if (importFileType) importFileType.textContent = data.fileType || 'Excel/Word';
   if (importQuestionCount) importQuestionCount.textContent = `${data.count} Câu Hỏi`;
 
+  // Cập nhật kết quả vào khung Tính Năng 2 trong Modal QR
+  if (qmIrFileName) qmIrFileName.textContent = data.filename || '';
+  if (qmIrFileType) qmIrFileType.textContent = data.fileType || '';
+  if (qmIrCount) qmIrCount.textContent = `${data.count} Câu`;
+  renderQmInlinePreview(pendingImportedQuestions);
+  if (qmImportResultBox) qmImportResultBox.style.display = 'flex';
+
   renderImportPreviewCards(pendingImportedQuestions);
   openImportPreviewModal();
-  showToast(`✅ Đã nhận dạng thành công ${data.count} câu hỏi từ ${data.filename}!`);
+  showToast(`✅ Đã nhận dạng thành công ${data.count} câu hỏi và tìm thấy đáp án đúng từ ${data.filename}!`);
 });
 
 socket.on('host:file_parse_error', (data) => {
@@ -1772,7 +1927,6 @@ if (btnApplyImportedQuestions) {
     });
 
     closeImportPreviewModal();
-    closeQrManagerModal();
   });
 }
 
@@ -1781,7 +1935,9 @@ socket.on('host:apply_imported_success', (data) => {
   if (data.questions) {
     questionsData = data.questions;
     renderQuestionList();
+    renderQmCurrentQuestions(questionsData); // Cập nhật Tính Năng 1 ngay lập tức!
     selectQuestionToEdit(0);
+    if (qmImportResultBox) qmImportResultBox.style.display = 'none';
   }
 });
 
@@ -1807,6 +1963,7 @@ socket.on('host:shuffle_success', (data) => {
   if (data.questions) {
     questionsData = data.questions;
     renderQuestionList();
+    renderQmCurrentQuestions(questionsData); // Cập nhật Tính Năng 1 ngay lập tức!
     selectQuestionToEdit(0);
   }
 });

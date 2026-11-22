@@ -9,7 +9,13 @@ const fs = require('fs');
 const { spawn } = require('child_process');
 
 const DEFAULT_QUESTIONS = require('./public/js/questions');
-const { parseXlsxBuffer, parseDocxBuffer, shuffleQuestionsList } = require('./question-parser');
+const { 
+  parseXlsxBuffer, 
+  parseDocxBuffer, 
+  shuffleQuestionsList,
+  exportQuestionsToXlsxBuffer,
+  exportQuestionsToDocxBuffer
+} = require('./question-parser');
 const QUESTIONS_FILE = path.join(__dirname, 'data', 'questions.json');
 
 function loadQuestions() {
@@ -761,6 +767,32 @@ app.post('/api/questions/shuffle', requireHostAuth, (req, res) => {
     res.json({ success: true, count: QUESTIONS.length, questions: QUESTIONS });
   } catch (err) {
     res.status(500).json({ error: err.message });
+  }
+});
+
+// Xuất bộ đề thi hiện tại ra file Excel (.xlsx)
+app.get('/api/questions/export/xlsx', (req, res) => {
+  try {
+    const buffer = exportQuestionsToXlsxBuffer(QUESTIONS);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="DeThi_KhaoNghiem_BuuSonKyHuong.xlsx"');
+    res.send(buffer);
+  } catch (err) {
+    console.error('Lỗi xuất Excel:', err);
+    res.status(500).send('Lỗi xuất file Excel: ' + err.message);
+  }
+});
+
+// Xuất bộ đề thi hiện tại ra file Word (.docx)
+app.get('/api/questions/export/docx', (req, res) => {
+  try {
+    const buffer = exportQuestionsToDocxBuffer(QUESTIONS);
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    res.setHeader('Content-Disposition', 'attachment; filename="DeThi_KhaoNghiem_BuuSonKyHuong.docx"');
+    res.send(buffer);
+  } catch (err) {
+    console.error('Lỗi xuất Word:', err);
+    res.status(500).send('Lỗi xuất file Word: ' + err.message);
   }
 });
 
