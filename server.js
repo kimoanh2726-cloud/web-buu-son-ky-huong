@@ -87,6 +87,11 @@ app.get('/host.html', (req, res, next) => {
   res.redirect('/player.html');
 });
 
+// Phục vụ Favicon chú rùa
+app.get('/favicon.ico', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'favicon.ico'));
+});
+
 // Phục vụ tài nguyên tĩnh với bộ nhớ đệm (Cache-Control) giúp người chơi tải cực nhanh
 app.use(express.static(path.join(__dirname, 'public'), {
   maxAge: '1d',
