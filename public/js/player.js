@@ -928,21 +928,21 @@ socket.on('quiz:your_result', (data) => {
     if (navigator.vibrate) navigator.vibrate(80);
     if (feedbackStatus) {
       feedbackStatus.style.color = '#4ade80';
-      feedbackStatus.textContent = `✨ CHÍNH XÁC! (+${data.pointsEarned}đ Công Đức)`;
+      feedbackStatus.textContent = `✨ Đã thêm công đức! (+${data.pointsEarned}đ)`;
     }
   } else if (data.status === 'WRONG') {
     if (window.zenAudio && window.zenAudio.playFailChime) window.zenAudio.playFailChime();
     if (navigator.vibrate) navigator.vibrate([60, 40, 60]);
     if (feedbackStatus) {
       feedbackStatus.style.color = '#ef4444';
-      feedbackStatus.textContent = '❌ Chưa Chính Xác! (0đ)';
+      feedbackStatus.textContent = '❌ Hãy bình tĩnh tu lại tâm! (0đ)';
     }
   } else if (data.status === 'MISSED') {
     if (window.zenAudio && window.zenAudio.playFailChime) window.zenAudio.playFailChime();
     if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
     if (feedbackStatus) {
       feedbackStatus.style.color = '#f59e0b';
-      feedbackStatus.textContent = '⌛ HẾT GIỜ! Bạn đã bỏ lỡ câu hỏi này (0đ)';
+      feedbackStatus.textContent = '⌛ Hết giờ! Hãy bình tĩnh tu lại tâm (0đ)';
     }
     const allBtns = qOptionsList ? qOptionsList.querySelectorAll('.q-opt-btn') : [];
     allBtns.forEach(b => b.classList.add('disabled'));
